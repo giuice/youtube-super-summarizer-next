@@ -14,41 +14,39 @@ import { Spinner } from 'reactstrap';
 
 interface VideoSummarizerProps {
 	videoId: string;
-  loading: boolean;
+	loading: boolean;
 }
 
 const model = new OpenAI({ openAIApiKey: CONFIG.OPENAI_API_KEY, temperature: 0.1 });
 
-export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, loading}) => {
-	const [summaries, setSummary] = useState<Transcript[]>([]);
-  const [apiError, setApiError] = useState<string>('');
+export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, loading }) => {
+	//const [summaries, setSummary] = useState<Transcript[]>([]);
+	const [summaries, setSummaries] = useState<Transcript[]>([]);
+	const [apiError, setApiError] = useState<string>('');
 
 	useEffect(() => {
 		console.log('entrou useEffect')
 		const fetchTranscript = async () => {
 			try {
 				const response = await axios.get(`/api/transcript?videoId=${videoId}`);
+				
 				if (response.status !== 200) {
 					throw new ApiError(response.status, 'Failed to fetch transcript');
 				}
 
 				const transcript = response.data;
-				const summarizedTranscript = await summarizeTranscript(transcript);
-				setSummary(summarizedTranscript);
+				await summarizeTranscript(transcript);
 			} catch (error) {
 				if (error instanceof ApiError) {
-          // Handle API error
-          console.error(`API Error (${error.status}): ${error.message}`);
-        } else {
-          // Handle other errors
-          console.error('Error fetching transcript:', error);
-        }
+					setApiError(`API Error (${error.status}): ${error.message}`);
+				} else {
+					setApiError('Error fetching transcript');
+				}
 			}
 		};
 
 		fetchTranscript();
 	}, [videoId]);
-
 
 
 	const extractTextEvery5Minutes = async (transcript: TranscriptResponse[]): Promise<Transcript[]> => {
@@ -85,13 +83,12 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, loadi
 	};
 
 
-	const doSummarize = async (transcript: Transcript[]): Promise<Transcript[]> => {
+	const doSummarize = async (transcript: Transcript[]) => {
 		const splitter = new RecursiveCharacterTextSplitter({
 			//separator: " ",
 			chunkSize: 400,
-			chunkOverlap: 20
+			chunkOverlap: 20,
 		});
-		const docs: Transcript[] = [];
 
 		for (const t of transcript) {
 			const output = await splitter.createDocuments([t.text]);
@@ -104,26 +101,25 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, loadi
 				minuteStarting: t.minuteStarting,
 			};
 
-			docs.push(summarizedTranscriptObj);
+			setSummaries((prevSummaries) => [...prevSummaries, summarizedTranscriptObj]);
 		}
-		return docs;
 	};
 
-	const summarizeTranscript = async (transcript: TranscriptResponse[]): Promise<Transcript[]> => {
+
+	const summarizeTranscript = async (transcript: TranscriptResponse[]) => {
 		const extractedTextWithMinutes = await extractTextEvery5Minutes(transcript);
 		console.log('extracted', extractedTextWithMinutes);
-		const summaries = await doSummarize(extractedTextWithMinutes);
-		return summaries;
+		await doSummarize(extractedTextWithMinutes);
 	};
 
 	return (
 		<div className="container">
-      {loading && (
-        <div className="text-center">
-          <Spinner color="primary" />
-        </div>
-      )}
-      {apiError && <div className="alert alert-danger">{apiError}</div>}
+			{loading && (
+				<div className="text-center">
+					<Spinner color="primary" />
+				</div>
+			)}
+			{apiError && <div className="alert alert-danger">{apiError}</div>}
 			{summaries.map((transcript, index) => (
 				<TranscriptItem key={index} transcript={transcript} />
 			))}
