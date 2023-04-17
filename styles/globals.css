@@ -1,4 +1,4 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -24,4 +24,29 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+} */
+.card-title{
+  color:darkcyan;
+}
+/* Add margin to the bottom of the container */
+.container {
+  margin-bottom: 2rem;
+}
+
+/* Add padding and adjust the width of the search box */
+.search-box {
+  max-width: 600px;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+/* Adjust line-height and letter-spacing for text elements */
+h1 {
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+}
+
+.alert {
+  line-height: 1.4;
+  letter-spacing: 0.03em;
 }
