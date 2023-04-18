@@ -5,44 +5,52 @@ import { OpenAI } from "langchain/llms/openai";
 import { CharacterTextSplitter } from "langchain/text_splitter";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { loadSummarizationChain } from "langchain/chains";
-import { Transcript } from '@/types/Transcript';
-import TranscriptItem from './TranscriptItem';
+import { Summary } from '@/types/Summary';
+import SummaryItem from '@/components/SummaryItem';
 import { TranscriptResponse } from 'youtube-transcript';
 import CONFIG from '@/utils/config';
 import ApiError from '@/utils/ApiError';
 import { Spinner } from 'reactstrap';
+import { getTranscript } from '@/utils/mongoDb';
+import SummaryList from './SummaryList';
+
 
 interface VideoSummarizerProps {
 	videoId: string;
-  loading: boolean;
 }
 
 const model = new OpenAI({ openAIApiKey: CONFIG.OPENAI_API_KEY, temperature: 0.1 });
 
-export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, loading}) => {
-	const [summaries, setSummary] = useState<Transcript[]>([]);
-  const [apiError, setApiError] = useState<string>('');
+export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId }) => {
+	//const [summaries, setSummary] = useState<Transcript[]>([]);
+	const [summaries, setSummaries] = useState<Summary[]>([]);
+	const [apiError, setApiError] = useState<string>('');
+	const [loading, setLoading] = useState(true);
+	let totalDuration: number =0;
 
 	useEffect(() => {
 		console.log('entrou useEffect')
 		const fetchTranscript = async () => {
 			try {
+
 				const response = await axios.get(`/api/transcript?videoId=${videoId}`);
+
 				if (response.status !== 200) {
 					throw new ApiError(response.status, 'Failed to fetch transcript');
 				}
 
 				const transcript = response.data;
-				const summarizedTranscript = await summarizeTranscript(transcript);
-				setSummary(summarizedTranscript);
+				console.log(transcript);
+				await summarizeTranscript(transcript);
+				setLoading(false);
 			} catch (error) {
 				if (error instanceof ApiError) {
-          // Handle API error
-          console.error(`API Error (${error.status}): ${error.message}`);
-        } else {
-          // Handle other errors
-          console.error('Error fetching transcript:', error);
-        }
+					setApiError(`API Error (${error.status}): ${error.message}`);
+				} else {
+					setApiError('Error fetching transcript');
+				}
+
+				setLoading(false);
 			}
 		};
 
@@ -50,48 +58,65 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, loadi
 	}, [videoId]);
 
 
-
-	const extractTextEvery5Minutes = async (transcript: TranscriptResponse[]): Promise<Transcript[]> => {
-		const results: Transcript[] = [];
-
-		let currentIntervalStart = 0;
-		let currentIntervalText = '';
-
-		transcript.forEach((item) => {
-			const currentMinute = Math.floor(item.offset / 60000);
-
-			if (currentMinute >= currentIntervalStart + 5) {
-				results.push({
-					text: currentIntervalText.trim(),
-					minuteStarting: currentIntervalStart,
-				});
-
-				currentIntervalStart += 5;
-				currentIntervalText = '';
-			}
-
-			currentIntervalText += ' ' + item.text;
-		});
-
-		// Add the last interval if there's any remaining text
-		if (currentIntervalText.trim()) {
-			results.push({
-				text: currentIntervalText.trim(),
-				minuteStarting: currentIntervalStart,
-			});
-		}
-
-		return results;
+	const formatDuration = (duration: number): string => {
+		const minutes = Math.floor(duration / 60000);
+		const seconds = ((duration % 60000) / 1000).toFixed(0);
+		return `${minutes}:${Number(seconds) < 10 ? '0' : ''}${seconds}`;
 	};
 
+	function segmentTranscriptByDuration({ transcript }: { transcript: TranscriptResponse[]; }): Summary[] {
+		const segmentDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+		const initialAccumulator = {
+		  results: [] as Summary[],
+		  currentIntervalStart: 0,
+		  currentIntervalText: '',
+		  currentDuration: 0,
+		};
+	  
+		const finalAccumulator = transcript.reduce((accumulator, item) => {
+		  while (item.offset >= accumulator.currentIntervalStart + segmentDuration) {
+			accumulator.results.push({
+			  text: accumulator.currentIntervalText.trim(),
+			  minuteStarting: accumulator.currentIntervalStart / 60000,
+			  duration: segmentDuration,
+			  formattedDuration: formatDuration(segmentDuration),
+			});
+	  
+			accumulator.currentIntervalStart += segmentDuration;
+			accumulator.currentIntervalText = '';
+			accumulator.currentDuration = 0;
+		  }
+	  
+		  accumulator.currentIntervalText += ' ' + item.text;
+		  accumulator.currentDuration += item.duration;
+	  
+		  return accumulator;
+		}, initialAccumulator);
+	  
+		// Add the last interval if there's any remaining text
+		if (finalAccumulator.currentIntervalText.trim()) {
+		  finalAccumulator.results.push({
+			text: finalAccumulator.currentIntervalText.trim(),
+			minuteStarting: finalAccumulator.currentIntervalStart / 60000,
+			duration: finalAccumulator.currentDuration,
+			formattedDuration: formatDuration(finalAccumulator.currentDuration),
+		  });
+		}
+		console.log('final results',finalAccumulator.results)
+		console.log('reduce duration', finalAccumulator.results.reduce((total, segment) => total + segment.duration, 0));
+		//return [];
+		return finalAccumulator.results;
+	  }
+	  
+	  
 
-	const doSummarize = async (transcript: Transcript[]): Promise<Transcript[]> => {
+
+	const doSummarize = async (transcript: Summary[]) => {
 		const splitter = new RecursiveCharacterTextSplitter({
 			//separator: " ",
 			chunkSize: 400,
-			chunkOverlap: 20
+			chunkOverlap: 20,
 		});
-		const docs: Transcript[] = [];
 
 		for (const t of transcript) {
 			const output = await splitter.createDocuments([t.text]);
@@ -99,34 +124,42 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, loadi
 			const res = await chain.call({
 				input_documents: output,
 			});
-			const summarizedTranscriptObj: Transcript = {
+			const summarizedTranscriptObj: Summary = {
 				text: res.text,
 				minuteStarting: t.minuteStarting,
+				duration: t.duration,
+				formattedDuration: t.formattedDuration,
 			};
 
-			docs.push(summarizedTranscriptObj);
+			setSummaries((prevSummaries) => [...prevSummaries, summarizedTranscriptObj]);
+			
 		}
-		return docs;
 	};
 
-	const summarizeTranscript = async (transcript: TranscriptResponse[]): Promise<Transcript[]> => {
-		const extractedTextWithMinutes = await extractTextEvery5Minutes(transcript);
+
+	const summarizeTranscript = async (transcript: TranscriptResponse[]) => {
+		const extractedTextWithMinutes = await segmentTranscriptByDuration({ transcript });
 		console.log('extracted', extractedTextWithMinutes);
-		const summaries = await doSummarize(extractedTextWithMinutes);
-		return summaries;
+		await doSummarize(extractedTextWithMinutes);
 	};
+	let accumulatedDuration = 0;
 
 	return (
 		<div className="container">
-      {loading && (
-        <div className="text-center">
-          <Spinner color="primary" />
-        </div>
-      )}
-      {apiError && <div className="alert alert-danger">{apiError}</div>}
-			{summaries.map((transcript, index) => (
-				<TranscriptItem key={index} transcript={transcript} />
-			))}
+			{loading && (
+				<div className="text-center">
+					{/* Add an encouraging phrase */}
+					<h3 className="text-header mb-3">Your video is summarizing...</h3>
+					{/* Change the color of the Spinner */}
+					<Spinner style={{ borderColor: '#c4302b', borderWidth: '0.2em' }} />
+				</div>
+			)}
+			{apiError && <div className="alert alert-danger">{apiError}</div>}
+			<SummaryList summaryData={summaries} />
+			{/* {summaries.map((transcript, index) => (
+								
+				<SummaryItem key={index} summary={transcript} totalDuration={summaries.reduce((total, segment) => total + segment.duration, 0)} />
+			))} */}
 		</div>
 	);
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VideoSummarizer } from '@/components/VideoSummarizer';
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -9,8 +9,8 @@ export default function Home() {
 
   const [url, setUrl] = useState('');
   const [videoId, setVideoId] = useState('');
-   // Add a loading state
-  const [loading, setLoading] = useState(true);
+  // Add a loading state
+  //const [loading, setLoading] = useState(true);
   const [validationError, setValidationError] = useState('');
 
 
@@ -24,15 +24,15 @@ export default function Home() {
     return match ? match[1] : '';
   };
 
-  const handleButtonClick = () => {
+  const handleButtonClick = useCallback(() => {
     if (validateInput(url)) {
-      setLoading(true); // Set loading to true before fetching the video ID
+
       const videoId = extractVideoId(url);
       console.log(videoId);
       setVideoId(videoId);
-      setLoading(false); // Set loading to false after setting the video ID
+
     }
-  };
+  }, [url]);
 
   // Add this function to validate the input
   const validateInput = (input: string): boolean => {
@@ -48,35 +48,33 @@ export default function Home() {
 
 
   return (
-    <div className='container'>
-      <div className="row">
-        <div className="col">
-
-          {/* <button onClick={toggleTheme}>Toggle theme</button> */}
-          <h1 className="text-center mb-4">YouTube Super Summarizer!</h1>
-          <div className="input-group mb-3 search-box">
-            <FontAwesomeIcon icon={faSearch} />
-
-            <input
-              className="form-control"
-              type="text"
-              placeholder="Enter youtube Url"
-              value={url}
-              id='txtUrl'
-              onChange={handleInputChange}
-            />
-            <div className="input-group-append">
-              <button className="btn btn-primary" onClick={handleButtonClick}>
-                Delight!
-              </button>
-            </div>
-          </div>
-          {/* Add this div to show the validation error message */}
-          {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
-          {/* Add the VideoSummarizer component */}
-          {!loading && videoId && <VideoSummarizer videoId={videoId} loading={loading} />}
-        </div>
+    <div className="container">
+  <section className="hero">
+    <div className="hero-text">
+      <h1 className="header-text">Supercharge Your YouTube Experience!</h1>
+      <p className="lead">Get concise summaries of your favorite videos in minutes</p>
+    </div>
+    <div className="input-group mb-3 search-box">
+      <input
+        className="form-control"
+        type="text"
+        placeholder="Enter YouTube URL"
+        value={url}
+        id="txtUrl"
+        onChange={handleInputChange}
+      />
+      <div className="input-group-append">
+        <button className="btn btn-primary" onClick={handleButtonClick}>
+          <i>
+            <FontAwesomeIcon icon={faSearch} /> Summarize!
+          </i>
+        </button>
       </div>
     </div>
+    {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
+    {videoId && <VideoSummarizer videoId={videoId} />}
+  </section>
+</div>
+
   )
 }
