@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VideoSummarizer } from '@/components/VideoSummarizer';
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import {VideoTitleList} from '@/components/VideoTitleList';
 
 
 
@@ -12,6 +13,7 @@ export default function Home() {
   // Add a loading state
   //const [loading, setLoading] = useState(true);
   const [validationError, setValidationError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +32,7 @@ export default function Home() {
       const videoId = extractVideoId(url);
       console.log(videoId);
       setVideoId(videoId);
+      setRefreshKey((prevKey) => prevKey + 1);
 
     }
   }, [url]);
@@ -71,9 +74,12 @@ export default function Home() {
         </button>
       </div>
     </div>
+    </section>
+    <VideoTitleList setVideoId={setVideoId} refreshKey={refreshKey} />
     {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
     {videoId && <VideoSummarizer videoId={videoId} />}
-  </section>
+    
+  
 </div>
 
   )
