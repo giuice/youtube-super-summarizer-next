@@ -1,0 +1,11 @@
+{
+	"type": "node",
+	"request": "launch",
+	"name": "Next.js",
+	"runtimeExecutable": "npm",
+	"runtimeArgs": [
+	  "run-script",
+	  "dev"
+	],
+	"port": 3000
+  }

@@ -1,3 +1,5 @@
+
+
 body {
   font-family: "Roboto", sans-serif;
   font-size: 18px;
@@ -7,7 +9,6 @@ body {
   margin-bottom: 2rem;
 }
 .hero-section {
-  background-image: url('/images/R.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -17,7 +18,7 @@ body {
   align-items: center;
 }
 .hero {
-  background-image: url("/images/R.jpg");
+  background-image: url('/images/redabstract.jpg');
   background-size: cover;
   background-position: center;
   padding: 4rem 0;
@@ -154,4 +155,40 @@ h1 {
 
 .progress-bar {
   background-image: linear-gradient(45deg, #c4302b, #a52a23);
+}
+
+.tabs-container {
+  display: flex;
+  align-items: stretch;
+}
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.tab {
+  padding: 12px 20px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-weight: bold;
+  background-color: #f0f0f0; /* Change the background color to a lighter shade */
+  color: #6c757d; /* Change the text color to a darker shade */
+  text-align: center;
+  transition: all 0.3s ease; /* Add a transition effect for smooth color changes */
+}
+
+.tab:hover {
+  background-color: #e0e0e0; /* Change the background color when hovering */
+}
+
+.tab.active {
+  background-color: #c4302b;
+  color: white;
+}
+
+.tab-content {
+  flex-grow: 1;
+  padding-left: 20px;
 }

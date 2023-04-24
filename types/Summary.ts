@@ -1,4 +1,4 @@
-export interface Summary {
+export interface SummaryType {
 	text: string;
 	minuteStarting: number;
 	duration: number;

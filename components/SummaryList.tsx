@@ -1,10 +1,10 @@
 // SummaryList.tsx
 import React from 'react';
-import { Summary } from '@/types/Summary';
+import { SummaryType } from '@/types/Summary';
 import SummaryItem from '@/components/SummaryItem';
 
 interface SummaryListProps {
-  summaryData: Summary[];
+  summaryData: SummaryType[];
 }
 
 const SummaryList: React.FC<SummaryListProps> = ({ summaryData }) => {
