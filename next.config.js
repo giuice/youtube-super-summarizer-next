@@ -13,7 +13,10 @@ const nextConfig = {
 
     return config;
   },
-  
+  env: {
+    OPENAI_API_KEY: "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",
+    SUPABASE_API_KEY:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndveHhyeXp6bGd3Z2FmcGFwZWJtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4MTg0OTA4MiwiZXhwIjoxOTk3NDI1MDgyfQ.YXGxer8fTa8gnEiuY1YAkmevX1erhbLrZnooj4K-HXw',
+  },
   reactStrictMode : false
 }
 
