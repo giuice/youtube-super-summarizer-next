@@ -192,3 +192,97 @@ h1 {
   flex-grow: 1;
   padding-left: 20px;
 }
+
+/* YouTube Metallic Colors */
+:root {
+  --yt-red: #c4302b;
+  --yt-light-red: #ff5252;
+  --yt-dark-red: #c90000;
+  --dark-bg: #121212;
+  --dark-card-bg: #1e1e1e;
+  --dark-text: #e0e0e0;
+}
+
+/* Video Title List */
+.latest-videos {
+  background-color: var(--dark-card-bg);
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.latest-videos-title {
+  color: var(--yt-red);
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 8px rgba(196, 48, 43, 0.8);
+}
+
+.latest-videos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.latest-videos-item {
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  background-color: #2b2b2b;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+/* .latest-videos-item:hover {
+  background-color: var(--yt-light-red);
+  color: #fff;
+} */
+
+.latest-videos-item a {
+  color: #ff0000;
+  text-decoration: none;
+}
+
+.latest-videos-item a:hover {
+  color: #c4302b;
+  text-decoration: underline;
+}
+
+.latest-videos-item:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.latest-videos-item:hover a {
+  color: #ff0000;
+}
+
+
+.thumbnail-container {
+  position: relative;
+}
+
+.thumbnail-preview {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  border: 2px solid var(--dark-text);
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.thumbnail {
+  width: 48px;
+  height: 36px;
+  border-radius: 3px;
+}
+
+.latest-videos-item:hover .thumbnail-preview {
+  display: block;
+}
