@@ -26,8 +26,8 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId }) => 
 	const [summaries, setSummaries] = useState<SummaryType[]>([]);
 	const [apiError, setApiError] = useState<string>('');
 	const [loading, setLoading] = useState(true);
-	let totalDuration: number = 0;
-
+	const [title, setTitle] = useState<string>('');
+	
 	useEffect(() => {
 		console.log('entrou useEffect')
 		const fetchTranscript = async () => {
