@@ -5,7 +5,6 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { loadSummarizationChain } from "langchain/chains";
 import { SummaryType } from '@/types/Summary';
 import { TranscriptResponse } from 'youtube-transcript';
-import CONFIG from '@/utils/config';
 import ApiError from '@/utils/ApiError';
 import { Spinner } from 'reactstrap';
 import SummaryList from './SummaryList';
@@ -19,7 +18,7 @@ interface VideoSummarizerProps {
 	videoId: string;
 }
 
-const model = new OpenAI({ openAIApiKey: CONFIG.OPENAI_API_KEY, temperature: 0.1 });
+const model = new OpenAI({ openAIApiKey: process.env.OPENAI_API_KEY, temperature: 0.1 });
 
 export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId }) => {
 	//const [summaries, setSummary] = useState<Transcript[]>([]);
