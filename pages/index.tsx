@@ -13,7 +13,7 @@ export default function Home() {
   // Add a loading state
   //const [loading, setLoading] = useState(true);
   const [validationError, setValidationError] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [shouldFetchVideos, setShouldFetchVideos] = useState(true);
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,9 +30,14 @@ export default function Home() {
     if (validateInput(url)) {
 
       const videoId = extractVideoId(url);
-      console.log(videoId);
-      setVideoId(videoId);
-      setRefreshKey((prevKey) => prevKey + 1);
+      setVideoId('');;
+      
+      //seta um timeout para dar tempo de limpar o videoId
+      setTimeout(() => {
+        setVideoId(videoId);
+        },0);
+      
+
 
     }
   }, [url]);
@@ -75,9 +80,9 @@ export default function Home() {
       </div>
     </div>
     </section>
-    <VideoTitleList setVideoId={setVideoId} refreshKey={refreshKey} />
+    <VideoTitleList setVideoId={setVideoId} shouldFetchVideos={shouldFetchVideos} setShouldFetchVideos={setShouldFetchVideos}  />
     {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
-    {videoId && <VideoSummarizer videoId={videoId} />}
+    {videoId && <VideoSummarizer videoId={videoId} onVideoSummarized={() => setShouldFetchVideos(true)} />}
     
   
 </div>
