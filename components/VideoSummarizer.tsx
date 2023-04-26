@@ -19,7 +19,7 @@ interface VideoSummarizerProps {
 	onVideoSummarized: () => void;//to update last videos summarizeds list
 }
 
-const model = new OpenAI({ openAIApiKey: process.env.OPENAI_API_KEY, temperature: 0.1 });
+const model = new OpenAI({ openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY, temperature: 0.1 });
 
 export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, onVideoSummarized }) => {
 	//const [summaries, setSummary] = useState<Transcript[]>([]);
