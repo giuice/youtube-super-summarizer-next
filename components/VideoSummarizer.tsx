@@ -12,20 +12,20 @@ import TranscriptRepositorySupabase from '@/infra/supabase/TranscriptRepositoryS
 import TranscriptService from '@/infra/services/TranscriptService';
 import SummaryService from '@/infra/services/SummaryService';
 import SummaryRepositorySupabase from '@/infra/supabase/SummaryRepositorySupabase';
-
+import createVideoMetadata from '@/domain/video/getVideoMetadata';
 
 interface VideoSummarizerProps {
 	videoId: string;
+	onVideoSummarized: () => void;//to update last videos summarizeds list
 }
 
 const model = new OpenAI({ openAIApiKey: process.env.OPENAI_API_KEY, temperature: 0.1 });
 
-export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId }) => {
+export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, onVideoSummarized }) => {
 	//const [summaries, setSummary] = useState<Transcript[]>([]);
 	const [summaries, setSummaries] = useState<SummaryType[]>([]);
 	const [apiError, setApiError] = useState<string>('');
 	const [loading, setLoading] = useState(true);
-	const [title, setTitle] = useState<string>('');
 	
 	useEffect(() => {
 		console.log('entrou useEffect')
@@ -52,6 +52,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId }) => 
 					} else {
 						transcript = tData.json_text as TranscriptResponse[];
 					}
+					await createVideoMetadata(videoId); //save the video metadata
 					await summarizeTranscript(transcript);
 				}
 				setLoading(false);
@@ -160,17 +161,20 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId }) => 
 			setSummaries((prevSummaries) => [...prevSummaries, summarizedTranscriptObj]);
 
 		}
+		
 		const sService: SummaryService = new SummaryService(new SummaryRepositorySupabase());
 		await sService.create({ video_id: videoId, json_text: summaries, model:model.modelName, created_at: new Date() });
+		onVideoSummarized();
+
 	};
 
 
 	const summarizeTranscript = async (transcript: TranscriptResponse[]) => {
 		const extractedTextWithMinutes = await segmentTranscriptByDuration({ transcript });
-		console.log('extracted', extractedTextWithMinutes);
+
 		await doSummarize(extractedTextWithMinutes);
 	};
-	let accumulatedDuration = 0;
+   
 
 	return (
 		<div className="container">
