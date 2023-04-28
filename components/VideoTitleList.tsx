@@ -36,8 +36,9 @@ interface VideoTitleProps {
     if (shouldFetchVideos) {
 	  (async () => {
 		const videos = await fetchLatestVideos();
+    console.log('videos', videos);
 		if (videos) {
-		  setLatestVideos(videos.slice(0, 3));
+		  setLatestVideos(videos); //.slice(0, 3));
 		}
 	  })();
     setShouldFetchVideos(false);
