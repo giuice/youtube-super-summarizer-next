@@ -120,16 +120,6 @@ h1 {
   padding: 2rem 0;
 } */
 
-.content-wrapper {
-  display: flex;
-  gap: 1rem;
-}
-
-.main-content {
-  flex-grow: 1;
-}
-
-
 .alert-custom {
   background-color: #c4302b;
   color: #ffffff;
@@ -211,6 +201,20 @@ h1 {
   --dark-bg: #121212;
   --dark-card-bg: #1e1e1e;
   --dark-text: #e0e0e0;
+}
+
+/* Video Title List */
+.content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 1rem;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 992px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Video Title List */
