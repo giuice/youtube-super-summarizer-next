@@ -1,5 +1,5 @@
-import { IVideoRepository } from "../IVideoRepository";
-import { VideoData } from "../VideoData";
+import { IVideoRepository } from "./IVideoRepository";
+import { VideoData } from "./VideoData";
 
 export class VideoService {
 	constructor(private readonly videoRepository: IVideoRepository) {}

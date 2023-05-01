@@ -1,5 +1,5 @@
 import axios from "axios";
-import { VideoData } from "@/infra/VideoData";
+import { VideoData } from "@/domain/video/VideoData";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(

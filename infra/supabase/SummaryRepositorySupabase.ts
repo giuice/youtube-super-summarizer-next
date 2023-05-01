@@ -1,6 +1,6 @@
 import supabase from "./supabase";
-import { SummaryData } from "../SummaryData";
-import { ISummaryRepository } from "../ISummaryRepository";
+import { SummaryData } from "@/domain/summary/SummaryData";
+import { ISummaryRepository } from "@/domain/summary/ISummaryRepository";
 
 export class SummaryRepositorySupabase implements ISummaryRepository {
   private readonly supabase = supabase;

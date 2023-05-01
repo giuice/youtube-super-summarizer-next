@@ -1,6 +1,6 @@
 import supabase from "./supabase";
-import { VideoData } from "../VideoData";
-import { IVideoRepository } from "../IVideoRepository";
+import { VideoData } from "../../domain/video/VideoData";
+import { IVideoRepository } from "../../domain/video/IVideoRepository";
 
 export class VideoRepositorySupabase implements IVideoRepository {
   

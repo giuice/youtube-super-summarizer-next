@@ -1,5 +1,5 @@
-import { ISummaryRepository } from "../ISummaryRepository";
-import { SummaryData } from "../SummaryData";
+import { ISummaryRepository } from "./ISummaryRepository";
+import { SummaryData } from "./SummaryData";
 
 export class SummaryService {
 	constructor(private readonly summaryRepository: ISummaryRepository) {}

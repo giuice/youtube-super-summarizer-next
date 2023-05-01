@@ -1,11 +1,11 @@
 import React from 'react';
-import { SummaryType } from '@/types/Summary';
+import { SummaryViewModel } from '@/domain/summary/Summary';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 
 interface SummaryItemProps {
-  summary: SummaryType;
+  summary: SummaryViewModel;
   accumulatedDuration: string;
   progressBarWidth: number;
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { VideoData } from '@/infra/VideoData';
-import { VideoService } from '@/infra/services/VideoService';
+import { VideoData } from '@/domain/video/VideoData';
+import { VideoService } from '@/domain/video/VideoService';
 import { VideoRepositorySupabase } from '@/infra/supabase/VideoRepositorySupabase';
 import { VideoModal } from '@/components/VideoModal';
 

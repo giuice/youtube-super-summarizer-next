@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VideoSummarizer } from '@/components/VideoSummarizer';
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
 import { VideoTitleList } from '@/components/VideoTitleList';
+
 
 
 
@@ -14,6 +15,16 @@ export default function Home() {
   //const [loading, setLoading] = useState(true);
   const [validationError, setValidationError] = useState('');
   const [shouldFetchVideos, setShouldFetchVideos] = useState(true);
+  const [useChapters, setUseChapters] = useState(true);
+  const [selectedModel, setSelectedModel] = useState('davinci-003');
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUseChapters(e.target.checked);
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedModel(e.target.value);
+  };
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,17 +85,59 @@ export default function Home() {
           <div className="input-group-append">
             <button className="btn btn-primary" onClick={handleButtonClick}>
               <i>
-                <FontAwesomeIcon icon={faSearch} /> Summarize!
+                <FontAwesomeIcon icon={faSearch} /> Go!
               </i>
+            </button> &nbsp;
+            <button
+              className="btn btn-primary"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#optionsPanel"
+              aria-expanded="true"
+              aria-controls="optionsPanel"
+            ><i>
+                <FontAwesomeIcon icon={faBoxOpen} />
+              </i>
+              Options
             </button>
           </div>
         </div>
+        
       </section>
+      <div className="collapse" id="optionsPanel">
+        <div className="options mb-3 row rounded">
+          <div className="checkbox-container">
+            <input
+              className="custom-checkbox"
+              type="checkbox"
+              id="useChapters"
+              checked={useChapters}
+              onChange={handleCheckboxChange}
+            />
+            <label className="form-check-label" htmlFor="useChapters">
+              Use Chapters
+            </label>
+            
+              <label className='col-form-label' htmlFor="modelSelect">Use model to summarize:</label>
+              <select
+                className="form-control-plaintext"
+                id="modelSelect"
+                value={selectedModel}
+                onChange={handleSelectChange}
+              >
+                <option value="davinci-003">davinci-003</option>
+                <option value="babbage-001">babbage-001</option>
+              </select>
+            
+          </div>
+        </div>
+      </div>
+
       <div className="content-wrapper">
         <div className="main-content">
 
           {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
-          {videoId && <VideoSummarizer videoId={videoId} onVideoSummarized={() => setShouldFetchVideos(true)} />}
+          {videoId && <VideoSummarizer videoId={videoId} useChapters={useChapters} selectedModel={selectedModel} onVideoSummarized={() => setShouldFetchVideos(true)} />}
         </div>
         <VideoTitleList setVideoId={setVideoId} shouldFetchVideos={shouldFetchVideos} setShouldFetchVideos={setShouldFetchVideos} />
       </div>
