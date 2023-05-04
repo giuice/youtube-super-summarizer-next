@@ -57,7 +57,7 @@ export default function Home() {
 
   // Add this function to validate the input
   const validateInput = (input: string): boolean => {
-    const urlPattern = /^(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=\S+$/;
+    const urlPattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|embed\/|v\/|)?([a-zA-Z0-9_-]{11})(\S+)?$/;
     if (!urlPattern.test(input)) {
       setValidationError('Please enter a valid YouTube URL.');
       return false;
