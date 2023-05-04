@@ -24,6 +24,26 @@ body {
   padding: 4rem 0;
   text-align: center;
   position: relative;
+  margin-bottom: 10px;
+}
+
+.youtube-title {
+  word-break: break-word;
+  font-family: "YouTube Sans","Roboto",sans-serif;
+  font-size: 2rem;
+  line-height: 2.8rem;
+  font-weight: 600;
+  overflow: hidden;
+  display: block;
+  max-height: 5.6rem;
+
+  -webkit-line-clamp: 2;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  white-space: normal;
+  color:var(--darkreader-text--yt-spec-text-primary);
 }
 
 .hero-text {

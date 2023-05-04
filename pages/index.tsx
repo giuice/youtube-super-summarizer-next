@@ -11,8 +11,7 @@ export default function Home() {
 
   const [url, setUrl] = useState('');
   const [videoId, setVideoId] = useState('');
-  // Add a loading state
-  //const [loading, setLoading] = useState(true);
+  const [videoTitle, setVideoTitle] = useState('');
   const [validationError, setValidationError] = useState('');
   const [shouldFetchVideos, setShouldFetchVideos] = useState(true);
   const [useChapters, setUseChapters] = useState(true);
@@ -26,6 +25,9 @@ export default function Home() {
     setSelectedModel(e.target.value);
   };
 
+  const handleVideoTitleUpdate = (title: string) => {
+    setVideoTitle(title);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
@@ -137,7 +139,8 @@ export default function Home() {
         <div className="main-content">
 
           {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
-          {videoId && <VideoSummarizer videoId={videoId} useChapters={useChapters} selectedModel={selectedModel} onVideoSummarized={() => setShouldFetchVideos(true)} />}
+          {videoId && <h1 className='youtube-title'>{ videoTitle } </h1>}
+          {videoId && <VideoSummarizer videoId={videoId} onVideoTitleUpdate={handleVideoTitleUpdate} useChapters={useChapters} selectedModel={selectedModel} onVideoSummarized={() => setShouldFetchVideos(true)} />}
         </div>
         <VideoTitleList setVideoId={setVideoId} shouldFetchVideos={shouldFetchVideos} setShouldFetchVideos={setShouldFetchVideos} />
       </div>

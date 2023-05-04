@@ -12,12 +12,13 @@ interface VideoSummarizerProps {
 	videoId: string;
 	useChapters: boolean;
 	selectedModel: string;
+	onVideoTitleUpdate: (title: string) => void;
 	onVideoSummarized: () => void;//to update last videos summarizeds list
 }
 
 
 
-export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useChapters, selectedModel, onVideoSummarized }) => {
+export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useChapters, selectedModel, onVideoTitleUpdate, onVideoSummarized }) => {
 	//const [summaries, setSummary] = useState<Transcript[]>([]);
 	const [summaries, setSummaries] = useState<SummaryViewModel[]>([]);
 	const [apiError, setApiError] = useState<string>('');
@@ -27,6 +28,10 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 	useEffect(() => {
 		const fetchTranscript = async () => {
 			try {
+				const metadata = await VideoDataService.getVideoMetadata(videoId);
+				if (metadata) { 
+					onVideoTitleUpdate(metadata.title);
+				}
 				const summariesObj: Summaries | null = await VideoDataService.getSummaries(videoId);
 				const transcripts = summariesObj?.transcripts;
 				const chapters = summariesObj?.chapters;
