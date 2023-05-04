@@ -2,7 +2,7 @@
 export interface VideoSegmentData {
 	id?: number;
 	video_id: string;
-	title: string;
+	title?: string;
 	start_time: number; // in milliseconds
 	duration: number; // in milliseconds
 	content: string;

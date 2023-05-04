@@ -8,7 +8,7 @@ export class VideoSegmentRepositorySupabase implements IVideoSegmentRepository {
   async create(data: VideoSegmentData): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from("transcriptions")
+        .from("video_segments")
         .insert({
           
           video_id: data.video_id,
@@ -31,7 +31,7 @@ export class VideoSegmentRepositorySupabase implements IVideoSegmentRepository {
   async findByVideoId(videoId: string): Promise<VideoSegmentData[] | null> {
     try {
       const { data, error } = await this.supabase
-        .from("transcriptions")
+        .from("video_segments")
         .select("*")
         .eq("video_id", videoId)
         .single();

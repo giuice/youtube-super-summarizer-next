@@ -2,7 +2,7 @@ import React from 'react';
 import { SummaryViewModel } from '@/domain/summary/Summary';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSection } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsTurnRight } from '@fortawesome/free-solid-svg-icons';
 
 interface SummaryChaptersItemProps {
   summary: SummaryViewModel;
@@ -16,11 +16,11 @@ const SummaryItem: React.FC<SummaryChaptersItemProps> = ({ summary }) => {
       <div className="card-body">
         <div className="d-flex align-items-center">
           <div className="mr-3">
-            <FontAwesomeIcon icon={faSection} size="2x" className="text-metallic" />
+            <FontAwesomeIcon icon={faArrowsTurnRight} size="1x" className="text-metallic" />
           </div>
           <div>
             <h4 className="mb-0 text-metallic">
-              Minute {summary.formattedDuration} - {summary.title}
+             &nbsp; Minute {summary.formattedDuration} - {summary.title}
             </h4>
           </div>
         </div>

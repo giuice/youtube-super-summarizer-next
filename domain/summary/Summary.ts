@@ -1,92 +1,176 @@
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { ISummaryRepository } from "./ISummaryRepository";
 import SummaryService from "./SummaryService";
 import { loadSummarizationChain } from "langchain/chains";
-import SummaryRepositorySupabase from "@/infra/supabase/SummaryRepositorySupabase";
-import {PromptTemplate} from "langchain/prompts";
+import { ISummaryRepository } from "./ISummaryRepository";
+import { PromptTemplate } from "langchain/prompts";
+import { OpenAI } from "langchain/llms/openai";
 
 export interface SummaryViewModel {
-	text: string;
-	minuteStarting: number;
-	duration: number;
-	formattedDuration: string;
-	title?: string;
+  text: string;
+  minuteStarting: number;
+  duration: number;
+  formattedDuration: string;
+  title?: string;
 }
 
 export interface Summaries {
-	transcripts: SummaryViewModel[];
-	chapters: SummaryViewModel[] | null;
+  transcripts: SummaryViewModel[] |null;
+  chapters: SummaryViewModel[] | null;
 }
 
-interface ISummary{
-	
-}
-
+interface ISummary {}
 
 export class Summary {
-	private splitter: RecursiveCharacterTextSplitter;
-	private summarizationChain: any;
-	private summaryService: SummaryService;
-    private model: any;
-	constructor(model: any) {
-	  this.splitter = new RecursiveCharacterTextSplitter({
-		chunkSize: 400,
-		chunkOverlap: 20,
-	  });
-	  this.model = model;
-	  //this.summarizationChain = loadSummarizationChain(model, { type: "map_reduce" });
-	  this.summaryService = new SummaryService(new SummaryRepositorySupabase());
-	}
-  
-	async summarizeTranscript(transcript: SummaryViewModel[]): Promise<SummaryViewModel[]> {
-	  let summaries: SummaryViewModel[] = [];
-	  for (const t of transcript) {
-		const output = await this.splitter.createDocuments([t.text]);
-		const res = await this.summarizationChain.call({
-		  input_documents: output,
-		});
-		const summarizedTranscriptObj: SummaryViewModel = {
-		  text: res.text,
-		  minuteStarting: t.minuteStarting,
-		  duration: t.duration,
-		  formattedDuration: t.formattedDuration,
-		};
-		summaries.push(summarizedTranscriptObj);
-	  }
-	  return summaries;
-	}
-
-	async summarizeChapter(chapters: SummaryViewModel[]): Promise<SummaryViewModel[]> {
-		let summaries: SummaryViewModel[] = [];
-		for (const t of chapters) {
-		  const output = await this.splitter.createDocuments([t.text]);
-		//   const template = `Write a concise summary of the following text:
-		// 	Title: ${t.title}
-
-		// 	"{text}"
+  private splitter: RecursiveCharacterTextSplitter;
+  private model: OpenAI;
 
 
-		// 	CONCISE SUMMARY:`
-		// 	const myPrompt = new PromptTemplate({
-		// 	template,
-		// 	inputVariables: ["text"],
-		// 	})
-		  const res = await loadSummarizationChain(this.model, { type: "map_reduce", }).call({
-			input_documents: output
-		  });
-		  const summarizedTranscriptObj: SummaryViewModel = {
-			text: res.text,
-			minuteStarting: t.minuteStarting,
-			duration: t.duration,
-			formattedDuration: t.formattedDuration,
-			title: t.title
-		  };
-		  summaries.push(summarizedTranscriptObj);
-		}
-		return summaries;
-	  }
-  
-	async saveSummaries(summaries: SummaryViewModel[], model: any) {
-	  //await this.summaryService.create({ json_text: summaries, model: model.modelName, created_at: new Date() });
-	}
+  constructor() {
+    this.splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 400,
+      chunkOverlap: 20,
+    });
+    this.model = new OpenAI({
+      openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+      temperature: 0.1,
+    });
+    //this.summarizationChain = loadSummarizationChain(model, { type: "map_reduce" });
   }
+
+  async summarizeTranscript2(
+    transcript: SummaryViewModel[]
+  ): Promise<SummaryViewModel[]> {
+    let summaries: SummaryViewModel[] = [];
+    try {
+      for (const t of transcript) {
+        const output = await this.splitter.createDocuments([t.text]);
+
+        //   const template = `TLDR; the following text,  The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+
+        // 	"{text}"
+
+        // 	CONCISE SUMMARY:`
+        // 	const myPrompt = new PromptTemplate({
+        // 	template,
+        // 	inputVariables: ["text"],
+        // 	})
+        const res = await loadSummarizationChain(this.model, {
+          type: "stuff",
+        }).call({
+          input_documents: output,
+        });
+        const summarizedTranscriptObj: SummaryViewModel = {
+          text: res.text,
+          minuteStarting: t.minuteStarting,
+          duration: t.duration,
+          formattedDuration: t.formattedDuration,
+        };
+        summaries.push(summarizedTranscriptObj);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    return summaries;
+  }
+
+  async summarizeChapter2(
+    chapters: SummaryViewModel[]
+  ): Promise<SummaryViewModel[]> {
+    let summaries: SummaryViewModel[] = [];
+    for (const t of chapters) {
+      const output = await this.splitter.createDocuments([t.text]);
+      const template = `TLDR; the following text,  The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+			Title: ${t.title}
+
+			"{text}"
+
+
+			CONCISE SUMMARY:`;
+      const myPrompt = new PromptTemplate({
+        template,
+        inputVariables: ["text"],
+      });
+      const res = await loadSummarizationChain(this.model, {
+        type: "map_reduce",
+        combineMapPrompt: myPrompt,
+      }).call({
+        input_documents: output,
+      });
+      const summarizedTranscriptObj: SummaryViewModel = {
+        text: res.text,
+        minuteStarting: t.minuteStarting,
+        duration: t.duration,
+        formattedDuration: t.formattedDuration,
+        title: t.title,
+      };
+      summaries.push(summarizedTranscriptObj);
+    }
+    return summaries;
+  }
+
+  async summarizeTranscript(
+    transcript: SummaryViewModel
+  ): Promise<SummaryViewModel[]> {
+    const output = await this.splitter.createDocuments([transcript.text]);
+
+    //   const template = `TLDR; the following text,  The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+
+    // 	"{text}"
+
+    // 	CONCISE SUMMARY:`
+    // 	const myPrompt = new PromptTemplate({
+    // 	template,
+    // 	inputVariables: ["text"],
+    // 	})
+    const res = await loadSummarizationChain(this.model, {
+      type: "stuff",
+    }).call({
+      input_documents: output,
+    });
+    const summarizedTranscriptObj: SummaryViewModel = {
+      text: res.text,
+      minuteStarting: transcript.minuteStarting,
+      duration: transcript.duration,
+      formattedDuration: transcript.formattedDuration,
+    };
+
+    return [summarizedTranscriptObj];
+  }
+
+  async summarizeChapter(
+    chapter: SummaryViewModel
+  ): Promise<SummaryViewModel[]> {
+    const output = await this.splitter.createDocuments([chapter.text]);
+    const template = `TLDR; the following text,  The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+		  Title: ${chapter.title}
+	  
+		  "{text}"
+	  
+	  
+		  CONCISE SUMMARY:`;
+    const myPrompt = new PromptTemplate({
+      template,
+      inputVariables: ["text"],
+    });
+    const res = await loadSummarizationChain(this.model, {
+      type: "map_reduce",
+      combineMapPrompt: myPrompt,
+    }).call({
+      input_documents: output,
+    });
+    const summarizedTranscriptObj: SummaryViewModel = {
+      text: res.text,
+      minuteStarting: chapter.minuteStarting,
+      duration: chapter.duration,
+      formattedDuration: chapter.formattedDuration,
+      title: chapter.title,
+    };
+
+    return [summarizedTranscriptObj];
+  }
+
+  async saveSummaries(summaries: SummaryViewModel[]) {
+    //await this.summaryService.create({ json_text: summaries, model: model.modelName, created_at: new Date() });
+  }
+}

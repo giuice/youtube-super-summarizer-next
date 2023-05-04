@@ -22,12 +22,13 @@ const SummaryItem: React.FC<SummaryItemProps> = ({ summary,accumulatedDuration, 
           </div>
           <div>
             <h4 className="mb-0 text-metallic">
-              Minute {summary.minuteStarting} - {accumulatedDuration}
+              &nbsp; Minute {summary.minuteStarting} - {accumulatedDuration}
             </h4>
             <div className="progress" style={{ height: "8px" }}>
               <div
                 className="progress-bar"
                 role="progressbar"
+                title="Progress"
                 style={{ width: `${progressBarWidth}%` }}
                 aria-valuenow={progressBarWidth}
                 aria-valuemin={0}
