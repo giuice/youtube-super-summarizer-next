@@ -31,10 +31,18 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 				const transcripts = summariesObj?.transcripts;
 				const chapters = summariesObj?.chapters;
 				if (isVideoSummarized(summariesObj, useChapters)) {
-					if (transcripts)
-						setSummaries(transcripts);
-					if (chapters)
+					if (transcripts || (!chapters && useChapters)){
+						if (transcripts)
+						{
+							setSummaries(transcripts);
+							setHasChapters(false);
+						}
+					}			
+					if (chapters && useChapters){
 						setSummaries(chapters);
+						setHasChapters(true);
+					}
+						
 				} else {
 					const transDto = await VideoDataService.getVideoTranscripts(videoId);
 					console.log('transDto', transDto);
