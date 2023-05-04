@@ -1,23 +1,27 @@
 import getVideoData from "@/application/VideoDataService";
-import { Summaries } from "@/domain/summary/Summary";
 import { useState } from "react";
-import { InferGetServerSidePropsType } from 'next'
-import { GetServerSideProps } from 'next'
+import { TranscriptData, TranscriptEntry } from "@/domain/transcript/Transcript";
+
 
 const TestPage = () => {
-	const [result, setResult] = useState<Summaries | null>(null);
+	const [result, setResult] = useState<TranscriptEntry[] | null>(null);
+	const [videoId, setVideoId] = useState('');
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setVideoId(e.target.value);
+	  };
+
 	const handleClick = async () => {
-	  try {
-		const data = await getVideoData.getSummaries('1234243')
-		setResult(data);
-	  } catch (error) {
-		console.error("Error:", error);
-	  }
+
+		await getVideoData.saveVideoTranscripts(videoId);
 	};
 	return (
 	  <div>
 		<h1>Test MongoDB</h1>
-		<button onClick={handleClick}>Click me to test MongoDB</button>
+		<label htmlFor="input_id">
+		<input id="input_id" placeholder="Enter YouTube URL" onChange={handleInputChange} className="form-control" type="text" value={videoId}  />
+		</label>
+		<button onClick={handleClick}>Click me to add data</button>
 		{result && (
 		  <div>
 			<h2>Result:</h2>

@@ -37,77 +37,7 @@ export class Summary {
     //this.summarizationChain = loadSummarizationChain(model, { type: "map_reduce" });
   }
 
-  async summarizeTranscript2(
-    transcript: SummaryViewModel[]
-  ): Promise<SummaryViewModel[]> {
-    let summaries: SummaryViewModel[] = [];
-    try {
-      for (const t of transcript) {
-        const output = await this.splitter.createDocuments([t.text]);
-
-        //   const template = `TLDR; the following text,  The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
-
-        // 	"{text}"
-
-        // 	CONCISE SUMMARY:`
-        // 	const myPrompt = new PromptTemplate({
-        // 	template,
-        // 	inputVariables: ["text"],
-        // 	})
-        const res = await loadSummarizationChain(this.model, {
-          type: "stuff",
-        }).call({
-          input_documents: output,
-        });
-        const summarizedTranscriptObj: SummaryViewModel = {
-          text: res.text,
-          minuteStarting: t.minuteStarting,
-          duration: t.duration,
-          formattedDuration: t.formattedDuration,
-        };
-        summaries.push(summarizedTranscriptObj);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
-    return summaries;
-  }
-
-  async summarizeChapter2(
-    chapters: SummaryViewModel[]
-  ): Promise<SummaryViewModel[]> {
-    let summaries: SummaryViewModel[] = [];
-    for (const t of chapters) {
-      const output = await this.splitter.createDocuments([t.text]);
-      const template = `TLDR; the following text,  The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
-			Title: ${t.title}
-
-			"{text}"
-
-
-			CONCISE SUMMARY:`;
-      const myPrompt = new PromptTemplate({
-        template,
-        inputVariables: ["text"],
-      });
-      const res = await loadSummarizationChain(this.model, {
-        type: "map_reduce",
-        combineMapPrompt: myPrompt,
-      }).call({
-        input_documents: output,
-      });
-      const summarizedTranscriptObj: SummaryViewModel = {
-        text: res.text,
-        minuteStarting: t.minuteStarting,
-        duration: t.duration,
-        formattedDuration: t.formattedDuration,
-        title: t.title,
-      };
-      summaries.push(summarizedTranscriptObj);
-    }
-    return summaries;
-  }
+  
 
   async summarizeTranscript(
     transcript: SummaryViewModel

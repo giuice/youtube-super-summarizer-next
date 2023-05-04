@@ -1,7 +1,7 @@
 import { Summaries, SummaryViewModel } from "@/domain/summary/Summary";
 import { VideoData } from "@/domain/video/VideoData";
 import Chapter from "@/domain/video_segment/Chapter";
-import { TranscriptEntry } from "@/domain/video_segment/TranscriptEntry";
+import { TranscriptData, TranscriptEntry } from '@/domain/transcript/Transcript';
 import ApiError from "@/utils/ApiError";
 import axios, { AxiosResponse } from "axios";
 import { TranscriptResponse } from "youtube-transcript";
@@ -102,8 +102,12 @@ export class VideoDataService {
     return null;
   }
 
+
+
   static async getVideoTranscripts(videoId: string): Promise<Summaries> {
     const transcript = await this.getVideoTranscript(videoId);
+    //not waiting for the promise to resolve here, its not interesting to the user
+    this.saveVideoTranscripts(videoId, transcript);
     const videoSegment = new VideoSegment();
     if (!transcript) {
       throw new Error(
@@ -133,6 +137,20 @@ export class VideoDataService {
       transcripts: segTranscript,
       chapters: chapters ? segmentChapters : null,
     };
+  }
+
+  static async saveVideoTranscripts(videoId: string, transcriptEntry: TranscriptEntry[]): Promise<void> {
+    const transData : TranscriptData = {
+			video_id: videoId,
+			transcript: transcriptEntry,
+			created_at: new Date() }
+      try {
+        const response = await axios.post('/api/transcripts/create', transData);
+        return response.data;
+      } catch (error) {
+        throw new Error(`Failed to create summary: ${error}`);
+      }
+		
   }
 
   static async saveSummaryChapters(videoId: string,

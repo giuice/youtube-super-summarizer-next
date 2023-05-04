@@ -1,5 +1,5 @@
 import { IVideoSegmentRepository } from "./IVideoSegmentRepository";
-import { TranscriptEntry } from "./TranscriptEntry";
+import { TranscriptEntry } from "../transcript/Transcript";
 import Chapter from "./Chapter";
 import { SummaryViewModel } from "../summary/Summary";
 
