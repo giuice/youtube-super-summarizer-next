@@ -20,7 +20,7 @@ const SummaryItem: React.FC<SummaryChaptersItemProps> = ({ summary }) => {
           </div>
           <div>
             <h4 className="mb-0 text-metallic">
-             &nbsp; Minute {summary.formattedDuration} - {summary.title}
+             &nbsp; {summary.formattedDuration} - {summary.title}
             </h4>
           </div>
         </div>

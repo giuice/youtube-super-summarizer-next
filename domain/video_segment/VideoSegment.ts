@@ -4,7 +4,6 @@ import Chapter from "./Chapter";
 import { SummaryViewModel } from "../summary/Summary";
 
 export class VideoSegment {
- 
   protected formatDuration = (duration: number): string => {
     const minutes = Math.floor(duration / 60000);
     const seconds = ((duration % 60000) / 1000).toFixed(0);
@@ -17,23 +16,33 @@ export class VideoSegment {
     return `${minutes}:${Number(seconds) < 10 ? "0" : ""}${seconds}`;
   };
 
+  //
+
   public async segmentChapters(
     chapters: Chapter[]
   ): Promise<SummaryViewModel[]> {
     const totalTime = Math.max(...chapters.map((chapter) => chapter.time));
 
-return chapters.map((chapter, index) => {
-  const nextChapterTime = index < chapters.length - 1 ? chapters[index + 1].time : null;
-  const duration = nextChapterTime ? nextChapterTime - chapter.time : totalTime - chapter.time;
+    return chapters.map((chapter, index) => {
+      const nextChapterTime =
+        index < chapters.length - 1 ? chapters[index + 1].time : null;
+      const duration = nextChapterTime
+        ? nextChapterTime - chapter.time
+        : totalTime - chapter.time;
 
-  return {
-    text: chapter.content,
-    minuteStarting: chapter.time / 60,
-    duration: duration,
-    formattedDuration:  ((chapter.time/60) + (duration/60)).toString() , 
-    title: chapter.title,
-  };
-}, []);
+      const minuteStarting = chapter.time / 60;
+      const formattedDuration = (duration / 60).toFixed(2);
+
+      return {
+        text: chapter.content,
+        minuteStarting: minuteStarting,
+        duration: duration,
+        formattedDuration: `${minuteStarting.toFixed(2)} - ${(
+          minuteStarting + parseFloat(formattedDuration)
+        ).toFixed(2)}`,
+        title: chapter.title,
+      };
+    }, []);
   }
 
   public async segmentTranscriptByDuration(

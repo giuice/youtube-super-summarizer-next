@@ -91,11 +91,11 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 		const summarizer = new Summary();
 		const newSummaries: SummaryViewModel[] = [];
 	  
-		await Promise.all(transcript.map(async (t) => {
+		for (const t of transcript) {
 		  const summarizedTranscriptObj = await summarizer.summarizeTranscript(t);
 		  newSummaries.push(...summarizedTranscriptObj);
 		  setSummaries((prevSummaries) => [...prevSummaries, ...summarizedTranscriptObj]);
-		}));
+		}
 	  
 		return newSummaries;
 	  };
@@ -104,11 +104,11 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 		const summarizer = new Summary();
 		const newSummaries: SummaryViewModel[] = [];
 	  
-		await Promise.all(chapters.map(async (chapter) => {
+		for (const chapter of chapters) {
 		  const summarizedChapter = await summarizer.summarizeChapter(chapter);
 		  newSummaries.push(...summarizedChapter);
 		  setSummaries((prevSummaries) => [...prevSummaries, ...summarizedChapter]);
-		}));
+		}
 	  
 		return newSummaries;
 	  };
