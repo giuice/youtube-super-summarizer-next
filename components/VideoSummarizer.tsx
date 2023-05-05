@@ -13,12 +13,13 @@ interface VideoSummarizerProps {
 	useChapters: boolean;
 	selectedModel: string;
 	onVideoTitleUpdate: (title: string) => void;
-	onVideoSummarized: () => void;//to update last videos summarizeds list
+	onVideoSummarized: () => void;
+	apiKey: string;//to update last videos summarizeds list
 }
 
 
 
-export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useChapters, selectedModel, onVideoTitleUpdate, onVideoSummarized }) => {
+export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useChapters, selectedModel, onVideoTitleUpdate, onVideoSummarized, apiKey }) => {
 	//const [summaries, setSummary] = useState<Transcript[]>([]);
 	const [summaries, setSummaries] = useState<SummaryViewModel[]>([]);
 	const [apiError, setApiError] = useState<string>('');
@@ -101,7 +102,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 
 
 	const doSummarizeTranscript = async (transcript: SummaryViewModel[]): Promise<SummaryViewModel[]> => {
-		const summarizer = new Summary();
+		const summarizer = new Summary(apiKey);
 		const newSummaries: SummaryViewModel[] = [];
 	  
 		for (const t of transcript) {
@@ -114,7 +115,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 	  };
 	  
 	  const doSummarizeChapters = async (chapters: SummaryViewModel[]): Promise<SummaryViewModel[]> => {
-		const summarizer = new Summary();
+		const summarizer = new Summary(apiKey);
 		const newSummaries: SummaryViewModel[] = [];
 	  
 		for (const chapter of chapters) {

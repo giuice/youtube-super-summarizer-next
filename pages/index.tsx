@@ -16,6 +16,16 @@ export default function Home() {
   const [shouldFetchVideos, setShouldFetchVideos] = useState(true);
   const [useChapters, setUseChapters] = useState(true);
   const [selectedModel, setSelectedModel] = useState('davinci-003');
+  const [apiKey, setApiKey] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleApiKeyChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    setApiKey(e.target.value);
+  };
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUseChapters(e.target.checked);
@@ -85,7 +95,7 @@ export default function Home() {
             onChange={handleInputChange}
           />
           <div className="input-group-append">
-            <button className="btn btn-primary" onClick={handleButtonClick}>
+            <button className="btn btn-primary" onClick={handleButtonClick} disabled={!apiKey}>
               <i>
                 <FontAwesomeIcon icon={faSearch} /> Go!
               </i>
@@ -93,54 +103,90 @@ export default function Home() {
             <button
               className="btn btn-primary"
               type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#optionsPanel"
-              aria-expanded="true"
-              aria-controls="optionsPanel"
-            ><i>
+              onClick={toggleModal}
+            >
+              <i>
                 <FontAwesomeIcon icon={faBoxOpen} />
               </i>
               Options
             </button>
           </div>
         </div>
-        
+
       </section>
-      <div className="collapse" id="optionsPanel">
-        <div className="options mb-3 row rounded">
-          <div className="checkbox-container">
-            <input
-              className="custom-checkbox"
-              type="checkbox"
-              id="useChapters"
-              checked={useChapters}
-              onChange={handleCheckboxChange}
-            />
-            <label className="form-check-label" htmlFor="useChapters">
-              Use Chapters
-            </label>
-            
-              <label className='col-form-label' htmlFor="modelSelect">Use model to summarize:</label>
-              <select
-                className="form-control-plaintext"
-                id="modelSelect"
-                value={selectedModel}
-                onChange={handleSelectChange}
-              >
-                <option value="davinci-003">davinci-003</option>
-                <option value="babbage-001">babbage-001</option>
-              </select>
-            
+
+      <div className={`modal ${isModalOpen ? 'show' : ''}`} tabIndex={-1} style={{ display: isModalOpen ? 'block' : 'none' }}>
+        <div className="modal-dialog">
+          <div className="modal-content modal-custom">
+            <div className="modal-header">
+              <h5 className="modal-title">Options</h5>
+              <button type="button" className="btn-close btn-close-custom" title='Close' onClick={toggleModal}></button>
+            </div>
+            <div className="modal-body">
+              <div className="options-container">
+                <div className="mb3">
+                  <input
+                    className="custom-checkbox form-check-input"
+                    type="checkbox"
+                    id="useChapters"
+                    checked={useChapters}
+                    onChange={handleCheckboxChange}
+                  /> &nbsp;
+                  <label className="form-check-label" htmlFor="useChapters">
+                    Use Chapters
+                  </label>
+                </div>
+                <div className="mb3">
+                  <label className="form-label" htmlFor="modelSelect">Use model to summarize:</label>
+                  <select
+                    className="form-control"
+                    id="modelSelect"
+                    value={selectedModel}
+                    onChange={handleSelectChange}
+                  >
+                    <option value="davinci-003">davinci-003</option>
+                    <option value="babbage-001">babbage-001</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="apiKey" className="form-label">OpenAI API Key</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="apiKey"
+                  placeholder="Enter your OpenAI API key"
+                  value={apiKey}
+                  onChange={handleApiKeyChange}
+                />
+              </div>
+              <div className="mb-3">
+              <ul>
+              <li>OpenAI API key is required to use this app.</li>
+              <li>Don&apost have an API key? <a href="https://platform.openai.com/" target="_blank"  rel="noopener">Sign up</a> for access.</li>
+              <li>In any moment you key is stored or saved.</li>
+            </ul>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={toggleModal}>Close</button>
+            </div>
           </div>
         </div>
       </div>
-
       <div className="content-wrapper">
         <div className="main-content">
-
+          {!apiKey && <div className="alert alert-danger mt-2">
+            <i>To summarize a new video please enter your OpenAI API key in the <a href='#' onClick={toggleModal}>options menu</a>.</i>
+          </div>}
           {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
-          {videoId && <h1 className='youtube-title'>{ videoTitle } </h1>}
-          {videoId && <VideoSummarizer videoId={videoId} onVideoTitleUpdate={handleVideoTitleUpdate} useChapters={useChapters} selectedModel={selectedModel} onVideoSummarized={() => setShouldFetchVideos(true)} />}
+          {videoId && <h1 className='youtube-title'>{videoTitle} </h1>}
+          {videoId && <VideoSummarizer videoId={videoId}
+            onVideoTitleUpdate={handleVideoTitleUpdate}
+            useChapters={useChapters}
+            apiKey={apiKey}
+            selectedModel={selectedModel}
+            onVideoSummarized={() => setShouldFetchVideos(true)} />}
         </div>
         <VideoTitleList setVideoId={setVideoId} shouldFetchVideos={shouldFetchVideos} setShouldFetchVideos={setShouldFetchVideos} />
       </div>

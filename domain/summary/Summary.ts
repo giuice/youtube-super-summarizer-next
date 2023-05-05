@@ -25,13 +25,13 @@ export class Summary {
   private model: OpenAI;
 
 
-  constructor() {
+  constructor(openAIApiKey: string) {
     this.splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 400,
       chunkOverlap: 20,
     });
     this.model = new OpenAI({
-      openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+      openAIApiKey: openAIApiKey, // process.env.NEXT_PUBLIC_OPENAI_API_KEY,
       temperature: 0.1,
     });
     //this.summarizationChain = loadSummarizationChain(model, { type: "map_reduce" });
@@ -44,17 +44,32 @@ export class Summary {
   ): Promise<SummaryViewModel[]> {
     const output = await this.splitter.createDocuments([transcript.text]);
 
-    //   const template = `TLDR; the following text,  The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+    const mapTemplate = `TLDR; the text delimited by triple Hashes, The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+	  
 
-    // 	"{text}"
+		  ###{text}###
+	  
+	  
+		  IMPORTANT!!!: WRITE IN SAME LANGUAGE OF THE ORIGINAL TEXT:`;
+    const combineMapPrompt = new PromptTemplate({
+      template: mapTemplate,
+      inputVariables: ["text"],
+    });
+    const template = `TLDR; the text delimited by triple Hashes, The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+	  
 
-    // 	CONCISE SUMMARY:`
-    // 	const myPrompt = new PromptTemplate({
-    // 	template,
-    // 	inputVariables: ["text"],
-    // 	})
+		  ###{text}###
+	  
+	  
+		  IMPORTANT!!!: WRITE IN SAME LANGUAGE OF THE ORIGINAL TEXT::`;
+    const combinePrompt = new PromptTemplate({
+      template,
+      inputVariables: ["text"],
+    });
     const res = await loadSummarizationChain(this.model, {
-      type: "stuff",
+      type: "map_reduce",
+      combineMapPrompt:combineMapPrompt,
+      combinePrompt: combinePrompt,
     }).call({
       input_documents: output,
     });
@@ -72,20 +87,33 @@ export class Summary {
     chapter: SummaryViewModel
   ): Promise<SummaryViewModel[]> {
     const output = await this.splitter.createDocuments([chapter.text]);
-    const template = `TLDR; the following text,  The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+    const mapTemplate = `TLDR; the text delimited by triple Hashes, The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
 		  Title: ${chapter.title}
 	  
-		  "{text}"
+		  ###{text}###
 	  
 	  
-		  CONCISE SUMMARY:`;
-    const myPrompt = new PromptTemplate({
+		  IMPORTANT!!!: WRITE IN SAME LANGUAGE OF THE ORIGINAL TEXT::`;
+    const combineMapPrompt = new PromptTemplate({
+      template: mapTemplate,
+      inputVariables: ["text"],
+    });
+    const template = `TLDR; the text delimited by triple Hashes, The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+		  Title: ${chapter.title}
+	  
+		  ###{text}###
+	  
+	  
+		  IMPORTANT!!!: WRITE IN SAME LANGUAGE OF THE ORIGINAL TEXT:`;
+    const combinePrompt = new PromptTemplate({
       template,
       inputVariables: ["text"],
     });
     const res = await loadSummarizationChain(this.model, {
       type: "map_reduce",
-      combineMapPrompt: myPrompt,
+      combineMapPrompt: combineMapPrompt,
+      combinePrompt: combinePrompt
+
     }).call({
       input_documents: output,
     });

@@ -140,6 +140,8 @@ export class VideoDataService {
   }
 
   static async saveVideoTranscripts(videoId: string, transcriptEntry: TranscriptEntry[]): Promise<void> {
+    const res = await axios.get(`/api/transcripts/findByVideoId?videoId=${videoId}`);	
+    if(res.data) {
     const transData : TranscriptData = {
 			video_id: videoId,
 			transcript: transcriptEntry,
@@ -150,7 +152,7 @@ export class VideoDataService {
       } catch (error) {
         throw new Error(`Failed to create summary: ${error}`);
       }
-		
+    }		
   }
 
   static async saveSummaryChapters(videoId: string,
