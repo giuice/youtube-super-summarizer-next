@@ -102,7 +102,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 
 
 	const doSummarizeTranscript = async (transcript: SummaryViewModel[]): Promise<SummaryViewModel[]> => {
-		const summarizer = new Summary(apiKey);
+		const summarizer = new Summary(apiKey, selectedModel);
 		const newSummaries: SummaryViewModel[] = [];
 	  
 		for (const t of transcript) {
@@ -115,7 +115,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 	  };
 	  
 	  const doSummarizeChapters = async (chapters: SummaryViewModel[]): Promise<SummaryViewModel[]> => {
-		const summarizer = new Summary(apiKey);
+		const summarizer = new Summary(apiKey, selectedModel);
 		const newSummaries: SummaryViewModel[] = [];
 	  
 		for (const chapter of chapters) {

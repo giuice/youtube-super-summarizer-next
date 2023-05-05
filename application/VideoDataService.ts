@@ -1,4 +1,4 @@
-import { Summaries, SummaryViewModel } from "@/domain/summary/Summary";
+import { Summaries, Summary, SummaryViewModel } from "@/domain/summary/Summary";
 import { VideoData } from "@/domain/video/VideoData";
 import Chapter from "@/domain/video_segment/Chapter";
 import { TranscriptData, TranscriptEntry } from '@/domain/transcript/Transcript';
@@ -12,6 +12,8 @@ import SummaryService from "@/domain/summary/SummaryService";
 import { SummaryChapterRepositorySupabase, SummaryTranscriptRepositorySupabase } from "@/infra/supabase/SummaryRepositorySupabase";
 import { SummaryData } from "@/domain/summary/SummaryData";
 import VideoService from "@/domain/video/VideoService";
+import { OpenAI } from "langchain/llms/openai";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 
 export class VideoDataService {
@@ -137,6 +139,34 @@ export class VideoDataService {
       transcripts: segTranscript,
       chapters: chapters ? segmentChapters : null,
     };
+  }
+
+  static async checkApiKey(openAIApiKey: string): Promise<boolean> {
+    try {
+      const prompt = "Hello!";
+      const response = await axios.post(
+        'https://api.openai.com/v1/engines/ada/completions',
+        {
+          prompt: prompt,
+          max_tokens: 15,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openAIApiKey}`,
+          },
+        }
+      );
+  
+      // If the API call is successful, return true
+      if (response.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      // If an error occurs during the API call, return false
+      return false;
+    }
+    return true;
   }
 
   static async saveVideoTranscripts(videoId: string, transcriptEntry: TranscriptEntry[]): Promise<void> {

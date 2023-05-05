@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VideoSummarizer } from '@/components/VideoSummarizer';
 import { faSearch, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
 import { VideoTitleList } from '@/components/VideoTitleList';
+import VideoDataService from '@/application/VideoDataService';
 
 
 
@@ -19,7 +20,7 @@ export default function Home() {
   const [apiKey, setApiKey] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleApiKeyChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApiKey(e.target.value);
   };
 
@@ -48,22 +49,43 @@ export default function Home() {
     const match = url.match(regex);
     return match ? match[1] : '';
   };
-
-  const handleButtonClick = useCallback(() => {
-    if (validateInput(url)) {
-
-      const videoId = extractVideoId(url);
-      setVideoId('');;
-
-      //seta um timeout para dar tempo de limpar o videoId
-      setTimeout(() => {
-        setVideoId(videoId);
-      }, 0);
-
-
-
+  const checkApiKey = useCallback(async (): Promise<boolean> => {
+    const checked = await VideoDataService.checkApiKey(apiKey);
+    if (!checked) {
+      setValidationError('Please enter a valid OpenAI API key');
+      setApiKey('');
+      return false;
+    } else {
+      setValidationError('');
+      // Save the API key to localStorage
+      localStorage.setItem('openai_api_key', apiKey);
+      return true;
     }
-  }, [url]);
+  }, [apiKey]);
+
+  useEffect(() => {
+    // Get the API key from localStorage
+    const storedApiKey = localStorage.getItem('openai_api_key');
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
+    }
+  }, []);
+
+  const handleButtonClick = useCallback(async () => {
+  const hasapi = await checkApiKey();
+  console.log(hasapi);
+  if (validateInput(url) && hasapi && apiKey) {
+    const videoId = extractVideoId(url);
+    setVideoId('');
+
+    // Set a timeout to give time to clear the videoId
+    setTimeout(() => {
+      setVideoId(videoId);
+    }, 0);
+  }else if(!hasapi){ 
+    setValidationError('Please enter a valid OpenAI API key, or choose one already summarized video from the list of titles.');
+  }
+}, [url, checkApiKey, apiKey]);
 
   // Add this function to validate the input
   const validateInput = (input: string): boolean => {
@@ -144,8 +166,9 @@ export default function Home() {
                     value={selectedModel}
                     onChange={handleSelectChange}
                   >
-                    <option value="davinci-003">davinci-003</option>
-                    <option value="babbage-001">babbage-001</option>
+                    <option value="text-davinci-003">davinci-003</option>
+                    <option value="text-babbage-001">babbage-001</option>
+                    
                   </select>
                 </div>
               </div>
@@ -161,11 +184,11 @@ export default function Home() {
                 />
               </div>
               <div className="mb-3">
-              <ul>
-              <li>OpenAI API key is required to use this app.</li>
-              <li>Don&apost have an API key? <a href="https://platform.openai.com/" target="_blank"  rel="noopener">Sign up</a> for access.</li>
-              <li>In any moment you key is stored or saved.</li>
-            </ul>
+                <ul>
+                  <li>OpenAI API key is required to use this app.</li>
+                  <li>Don&apost have an API key? <a href="https://platform.openai.com/" target="_blank" rel="noopener">Sign up</a> for access.</li>
+                  <li>In any moment you key is stored or saved on server, just in your browser for convenience.</li>
+                </ul>
               </div>
             </div>
             <div className="modal-footer">
@@ -176,7 +199,7 @@ export default function Home() {
       </div>
       <div className="content-wrapper">
         <div className="main-content">
-          {!apiKey && <div className="alert alert-danger mt-2">
+          {!apiKey && <div className="alert alert-warning mt-2">
             <i>To summarize a new video please enter your OpenAI API key in the <a href='#' onClick={toggleModal}>options menu</a>.</i>
           </div>}
           {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}

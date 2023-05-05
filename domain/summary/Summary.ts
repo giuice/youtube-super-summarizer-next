@@ -25,7 +25,7 @@ export class Summary {
   private model: OpenAI;
 
 
-  constructor(openAIApiKey: string) {
+  constructor(openAIApiKey: string, summaryModel: string = "text-babbage-001") {
     this.splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 400,
       chunkOverlap: 20,
