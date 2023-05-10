@@ -3,6 +3,7 @@ import { VideoData } from '@/domain/video/VideoData';
 import { VideoService } from '@/domain/video/VideoService';
 import { VideoRepositorySupabase } from '@/infra/supabase/VideoRepositorySupabase';
 import { VideoModal } from '@/components/VideoModal';
+import { Pagination } from '@/components/Pagination';
 
 interface VideoTitleProps {
   setVideoId: (videoId: string) => void;
@@ -16,6 +17,9 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
   const [showModal, setShowModal] = useState(false);
   const [currentVideoId, setCurrentVideoId] = useState('');
   const [searchText, setSearchText] = useState('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const videosPerPage = 6;
 
   const handleTitleClick = (videId: string) => {
     setCurrentVideoId(videId);
@@ -36,6 +40,12 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
   const getVideosByTitle = (title: string): VideoData[] => {
     return latestVideos.filter(video => video.title.toLowerCase().includes(title.toLowerCase()));
   };
+
+  const indexOfLastVideo = currentPage * videosPerPage;
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+  const currentVideos = getVideosByTitle(searchText).slice(indexOfFirstVideo, indexOfLastVideo);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   useEffect(() => {
     if (shouldFetchVideos) {
@@ -59,7 +69,7 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
         className="form-control mb-3 mx-3" />
       </div>
       <ul className="latest-videos-list">
-        {getVideosByTitle(searchText).map((video) => (
+        {currentVideos.map((video) => (
           <li key={video.video_id} className="latest-videos-item"
             onClick={() => setVideoId(video.video_id)}
             title='Click to show this Summary!'>
@@ -80,6 +90,7 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
           </li>
         ))}
       </ul>
+      <Pagination videosPerPage={videosPerPage} totalVideos={getVideosByTitle(searchText).length} paginate={paginate} />
       <VideoModal show={showModal} onHide={handleModalClose} videoId={currentVideoId} />
     </div>
   );
