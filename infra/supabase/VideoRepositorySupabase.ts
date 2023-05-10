@@ -14,7 +14,7 @@ export class VideoRepositorySupabase implements IVideoRepository {
 		  .from("videos")
 		  .select("*")
 		  .order("created_at", { ascending: false })
-		  .limit(10);
+		  .limit(100);
 		if (!data) {
 		  return null;
 		}

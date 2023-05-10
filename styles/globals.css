@@ -247,6 +247,11 @@ h1 {
   font-weight: bold;
   margin-bottom: 1rem;
   text-shadow: 0 0 8px rgba(196, 48, 43, 0.8);
+  margin-left: 1rem;
+}
+
+.latest-videos-search {
+  /* width: 310px; */
 }
 
 .latest-videos-list {
@@ -307,7 +312,7 @@ h1 {
 }
 
 h5.latest-videos-title {
-  text-align: center;
+  /* text-align: center; */
   margin-top: 15px;
 }
 

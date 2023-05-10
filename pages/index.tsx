@@ -186,7 +186,7 @@ export default function Home() {
               <div className="mb-3">
                 <ul>
                   <li>OpenAI API key is required to use this app.</li>
-                  <li>Don&apost have an API key? <a href="https://platform.openai.com/" target="_blank" rel="noopener">Sign up</a> for access.</li>
+                  <li>Don&apos;t have an API key? <a href="https://platform.openai.com/" target="_blank" rel="noopener">Sign up</a> for access.</li>
                   <li>In any moment you key is stored or saved on server, just in your browser for convenience.</li>
                 </ul>
               </div>
