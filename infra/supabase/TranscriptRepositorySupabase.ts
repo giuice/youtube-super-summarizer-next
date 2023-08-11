@@ -41,7 +41,7 @@ export class TranscriptRepositorySupabase implements ITranscriptRepository {
         return null;
       }
       if (error) {
-        return Promise.reject(new Error(error));
+        return Promise.reject(new Error(error.message));
       }
       return data as TranscriptData;
     } catch (error) {
