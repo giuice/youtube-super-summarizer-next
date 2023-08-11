@@ -41,7 +41,7 @@ export class SummaryRepositorySupabase implements ISummaryRepository {
         return null;
       }
       if (error) {
-        return Promise.reject(new Error(error));
+        return Promise.reject(new Error(error.message));
       }
       return data as SummaryData;
     } catch (error) {
