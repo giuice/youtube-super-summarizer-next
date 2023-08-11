@@ -16,7 +16,7 @@ export default function Home() {
   const [validationError, setValidationError] = useState('');
   const [shouldFetchVideos, setShouldFetchVideos] = useState(true);
   const [useChapters, setUseChapters] = useState(true);
-  const [selectedModel, setSelectedModel] = useState('davinci-003');
+  const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo');
   const [apiKey, setApiKey] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -166,6 +166,7 @@ export default function Home() {
                     value={selectedModel}
                     onChange={handleSelectChange}
                   >
+                    <option value="gpt-3.5-turbo">GPT3-Turbo</option>
                     <option value="text-davinci-003">davinci-003</option>
                     <option value="text-babbage-001">babbage-001</option>
                     
