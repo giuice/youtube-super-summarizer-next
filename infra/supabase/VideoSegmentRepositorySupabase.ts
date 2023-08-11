@@ -40,7 +40,7 @@ export class VideoSegmentRepositorySupabase implements IVideoSegmentRepository {
         return null;
       }
       if (error) {
-        return Promise.reject(new Error(error));
+        return Promise.reject(new Error(error.message));
       }
       return data as VideoSegmentData[];
     } catch (error) {
