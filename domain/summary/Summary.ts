@@ -66,10 +66,16 @@ export class Summary {
       template,
       inputVariables: ["text"],
     });
+    // const res = await loadSummarizationChain(this.model, {
+    //   type: "map_reduce",
+    //   combineMapPrompt:combineMapPrompt,
+    //   combinePrompt: combinePrompt,
+    // }).call({
+    //   input_documents: output,
+    // });
     const res = await loadSummarizationChain(this.model, {
-      type: "map_reduce",
-      combineMapPrompt:combineMapPrompt,
-      combinePrompt: combinePrompt,
+      type: "stuff",
+      prompt: combinePrompt,
     }).call({
       input_documents: output,
     });
@@ -109,11 +115,17 @@ export class Summary {
       template,
       inputVariables: ["text"],
     });
-    const res = await loadSummarizationChain(this.model, {
-      type: "map_reduce",
-      combineMapPrompt: combineMapPrompt,
-      combinePrompt: combinePrompt
+    // const res = await loadSummarizationChain(this.model, {
+    //   type: "map_reduce",
+    //   combineMapPrompt: combineMapPrompt,
+    //   combinePrompt: combinePrompt
 
+    // }).call({
+    //   input_documents: output,
+    // });
+    const res = await loadSummarizationChain(this.model, {
+      type: "stuff",
+      prompt: combinePrompt,
     }).call({
       input_documents: output,
     });
