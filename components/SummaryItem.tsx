@@ -3,6 +3,8 @@ import { SummaryViewModel } from '@/domain/summary/Summary';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface SummaryItemProps {
   summary: SummaryViewModel;
@@ -37,7 +39,11 @@ const SummaryItem: React.FC<SummaryItemProps> = ({ summary,accumulatedDuration, 
             </div>
           </div>
         </div>
-        <p className="mt-3 mb-0 summary-text">{summary.text}</p>
+        {/* <p className="mt-3 mb-0 summary-text">{summary.text}</p> */}
+         {/* Use ReactMarkdown to render markdown as HTML */}
+         <ReactMarkdown remarkPlugins={[remarkGfm]} className="mt-3 mb-0 summary-text">
+          {summary.text}
+        </ReactMarkdown>
       </div>
     </div>
   );
