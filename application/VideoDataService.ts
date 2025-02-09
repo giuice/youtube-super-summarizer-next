@@ -12,7 +12,6 @@ import SummaryService from "@/domain/summary/SummaryService";
 import { SummaryChapterRepositorySupabase, SummaryTranscriptRepositorySupabase } from "@/infra/supabase/SummaryRepositorySupabase";
 import { SummaryData } from "@/domain/summary/SummaryData";
 import VideoService from "@/domain/video/VideoService";
-import { OpenAI } from "langchain/llms/openai";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 
 
@@ -26,6 +25,7 @@ export class VideoDataService {
       const response = await axios.get(
         `/api/youtube_metadata?videoId=${videoId}`
       );
+      console.log('response.data', response.data);
       return response.data as VideoData;
     } catch (error) {
       throw new Error(
@@ -46,13 +46,16 @@ export class VideoDataService {
         throw new ApiError(response.status, "Failed to fetch transcript");
       }
       const transcript = response.data as TranscriptResponse[];
-      return transcript.map((entry: TranscriptResponse) => {
+      console.log('transcript first', transcript);
+      const entry =  transcript.map((entry: TranscriptResponse) => {
         return {
           text: entry.text,
           start: entry.offset,
           duration: entry.duration,
         } as TranscriptEntry;
       });
+      console.log('entry', entry);
+      return entry;
     } catch (error) {
       console.error(
         `Failed to fetch transcript for video ${videoId}: ${error}`
@@ -108,8 +111,9 @@ export class VideoDataService {
 
   static async getVideoTranscripts(videoId: string): Promise<Summaries> {
     const transcript = await this.getVideoTranscript(videoId);
+
     //not waiting for the promise to resolve here, its not interesting to the user
-    this.saveVideoTranscripts(videoId, transcript);
+    await this.saveVideoTranscripts(videoId, transcript);
     const videoSegment = new VideoSegment();
     if (!transcript) {
       throw new Error(
@@ -143,35 +147,37 @@ export class VideoDataService {
 
   static async checkApiKey(openAIApiKey: string): Promise<boolean> {
     try {
-      const prompt = "Hello!";
       const response = await axios.post(
-        'https://api.openai.com/v1/engines/ada/completions',
+        'https://api.openai.com/v1/chat/completions',
         {
-          prompt: prompt,
-          max_tokens: 15,
+          model: "gpt-4o-mini", // or "gpt-4" if you have access
+          messages: [
+            {
+              role: "user",
+              content: "Hello!"
+            }
+          ],
+          max_tokens: 15
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${openAIApiKey}`,
-          },
+            'Authorization': `Bearer ${openAIApiKey}`
+          }
         }
       );
   
-      // If the API call is successful, return true
-      if (response.status === 200) {
-        return true;
-      }
+      return response.status === 200;
     } catch (error) {
-      // If an error occurs during the API call, return false
+      console.error('OpenAI API key validation failed:', error);
       return false;
     }
-    return true;
   }
 
   static async saveVideoTranscripts(videoId: string, transcriptEntry: TranscriptEntry[]): Promise<void> {
-    const res = await axios.get(`/api/transcripts/findByVideoId?videoId=${videoId}`);	
-    if(res.data) {
+    const res = await axios.get(`/api/transcripts/findByVideoId?videoId=${videoId}`);
+    console.log('res transcript get 2', res);	
+    if(!res.data) {
     const transData : TranscriptData = {
 			video_id: videoId,
 			transcript: transcriptEntry,

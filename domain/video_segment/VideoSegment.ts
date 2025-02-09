@@ -5,9 +5,9 @@ import { SummaryViewModel } from "../summary/Summary";
 
 export class VideoSegment {
   protected formatDuration = (duration: number): string => {
-    const minutes = Math.floor(duration / 60000);
-    const seconds = ((duration % 60000) / 1000).toFixed(0);
-    return `${minutes}:${Number(seconds) < 10 ? "0" : ""}${seconds}`;
+    const minutes = Math.floor(duration / 60);
+    const seconds = Math.floor(duration % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
   protected formatDurationAsync = async (duration: number): Promise<string> => {
@@ -48,7 +48,7 @@ export class VideoSegment {
   public async segmentTranscriptByDuration(
     transcript: TranscriptEntry[]
   ): Promise<SummaryViewModel[]> {
-    const segmentDuration = 5 * 60 * 1000; // 5 minutes in milliseconds
+    const segmentDuration = 5 * 60; // 5 minutes in milliseconds
     const initialAccumulator = {
       results: [] as SummaryViewModel[],
       currentIntervalStart: 0,
@@ -60,7 +60,7 @@ export class VideoSegment {
       while (item.start >= accumulator.currentIntervalStart + segmentDuration) {
         accumulator.results.push({
           text: accumulator.currentIntervalText.trim(),
-          minuteStarting: accumulator.currentIntervalStart / 60000,
+          minuteStarting: accumulator.currentIntervalStart / 60,
           duration: segmentDuration,
           formattedDuration: this.formatDuration(segmentDuration),
         });

@@ -1,9 +1,8 @@
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import SummaryService from "./SummaryService";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { PromptTemplate } from "@langchain/core/prompts";
+
 import { loadSummarizationChain } from "langchain/chains";
-import { ISummaryRepository } from "./ISummaryRepository";
-import { PromptTemplate } from "langchain/prompts";
-import { OpenAI } from "langchain/llms/openai";
+import { ChatOpenAI } from "@langchain/openai";
 
 export interface SummaryViewModel {
   text: string;
@@ -22,18 +21,15 @@ interface ISummary {}
 
 export class Summary {
   private splitter: RecursiveCharacterTextSplitter;
-  private model: OpenAI;
+  private model: ChatOpenAI;
 
 
-  constructor(openAIApiKey: string, summaryModel: string = "text-babbage-001") {
+  constructor(openAIApiKey: string, summaryModel: string = "gpt-4o-mini") {
     this.splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 400,
       chunkOverlap: 20,
     });
-    this.model = new OpenAI({
-      openAIApiKey: openAIApiKey, // process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-      temperature: 0.1,
-    });
+    this.model = new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0, apiKey: openAIApiKey });
     //this.summarizationChain = loadSummarizationChain(model, { type: "map_reduce" });
   }
 

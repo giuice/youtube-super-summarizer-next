@@ -17,6 +17,7 @@ export default async function handler(
 
   try {
     const response = await axios.get(urlMetadata);
+    
     const data =  {
 	  video_id: videoId,
       title: response.data.title,

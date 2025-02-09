@@ -166,9 +166,9 @@ export default function Home() {
                     value={selectedModel}
                     onChange={handleSelectChange}
                   >
-                    <option value="gpt-3.5-turbo">GPT3-Turbo</option>
-                    <option value="text-davinci-003">davinci-003</option>
-                    <option value="text-babbage-001">babbage-001</option>
+                    <option value="gpt-4o-mini">gpt-4o-mini</option>
+                    {/* <option value="text-davinci-003">davinci-003</option>
+                    <option value="text-babbage-001">babbage-001</option> */}
                     
                   </select>
                 </div>
