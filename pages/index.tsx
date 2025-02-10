@@ -50,7 +50,7 @@ export default function Home() {
     return match ? match[1] : '';
   };
   const checkApiKey = useCallback(async (): Promise<boolean> => {
-    const checked = await VideoDataService.checkApiKey(apiKey);
+    const checked = await VideoDataService.checkApiKey(apiKey, selectedModel);
     if (!checked) {
       setValidationError('Please enter a valid OpenAI API key');
       setApiKey('');
@@ -167,9 +167,9 @@ export default function Home() {
                     onChange={handleSelectChange}
                   >
                     <option value="gpt-4o-mini">gpt-4o-mini</option>
+                    <option value="deepseek-reasoner">deepseek-reasoner</option>
                     {/* <option value="text-davinci-003">davinci-003</option>
                     <option value="text-babbage-001">babbage-001</option> */}
-                    
                   </select>
                 </div>
               </div>
@@ -186,8 +186,9 @@ export default function Home() {
               </div>
               <div className="mb-3">
                 <ul>
-                  <li>OpenAI API key is required to use this app.</li>
-                  <li>Don&apos;t have an API key? <a href="https://platform.openai.com/" target="_blank" rel="noopener">Sign up</a> for access.</li>
+                  <li>An API key is required to use this app.</li>
+                  <li>Don&apos;t have an OpenAPI key? <a href="https://platform.openai.com/" target="_blank" rel="noopener">Sign up</a> for access.</li>
+                  <li>Don&apos;t have an DeepSeek API key? <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">Sign up</a> for access.</li>
                   <li>In any moment you key is stored or saved on server, just in your browser for convenience.</li>
                 </ul>
               </div>

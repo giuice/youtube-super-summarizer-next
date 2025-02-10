@@ -6,6 +6,9 @@ import SummaryList from './SummaryList';
 import { Summary } from '@/domain/summary/Summary';
 import VideoDataService from '@/application/VideoDataService';
 import SummaryChaptersList from './SummaryChaptersList';
+import { OpenAIModel } from '@/domain/model/OpenAIModel';
+import { DeepSeekModel } from '@/domain/model/DeepSeekModel';
+import { BaseLanguageModel } from '@/domain/model/BaseLanguageModel';
 
 // process.env.LANGCHAIN_TRACING = "true";
 interface VideoSummarizerProps {
@@ -92,6 +95,15 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 		fetchTranscript();
 	}, [videoId]);
 
+	const getModelFactory = (model: string): BaseLanguageModel => {
+		switch (model) {
+		  case 'deepseek-reasoner':
+			return new DeepSeekModel();
+		  default:
+			return new OpenAIModel();
+		}
+	  };
+
 	const isVideoSummarized = (summariesObj: Summaries | null, useChapters: boolean): boolean => {
 		if (useChapters) {
 			return summariesObj?.chapters !== undefined;
@@ -102,7 +114,13 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 
 
 	const doSummarizeTranscript = async (transcript: SummaryViewModel[]): Promise<SummaryViewModel[]> => {
-		const summarizer = new Summary(apiKey, selectedModel);
+		
+		const modelFactory = getModelFactory(selectedModel);
+		const summarizer = new Summary(modelFactory, {
+			apiKey: apiKey,
+			modelName: selectedModel,
+			temperature: 0
+		});
 		const newSummaries: SummaryViewModel[] = [];
 	    console.log('transcript', transcript);
 		for (const t of transcript) {
@@ -115,7 +133,12 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 	  };
 	  
 	  const doSummarizeChapters = async (chapters: SummaryViewModel[]): Promise<SummaryViewModel[]> => {
-		const summarizer = new Summary(apiKey, selectedModel);
+		const modelFactory = getModelFactory(selectedModel);
+		const summarizer = new Summary(modelFactory, {
+			apiKey: apiKey,
+			modelName: selectedModel,
+			temperature: 0
+		});
 		const newSummaries: SummaryViewModel[] = [];
 	  
 		for (const chapter of chapters) {

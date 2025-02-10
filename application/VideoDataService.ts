@@ -145,31 +145,56 @@ export class VideoDataService {
     };
   }
 
-  static async checkApiKey(openAIApiKey: string): Promise<boolean> {
+  static async checkApiKey(apiKey: string, modelType: string = 'openai'): Promise<boolean> {
     try {
-      const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          model: "gpt-4o-mini", // or "gpt-4" if you have access
-          messages: [
-            {
-              role: "user",
-              content: "Hello!"
+      if (modelType === 'deepseek-reasoner') {
+        const response = await axios.post(
+          'https://api.deepseek.com/chat/completions',
+          {
+            model: "deepseek-reasoner",
+            messages: [
+              {
+                role: "user",
+                content: "Hello!"
+              }
+            ],
+            max_tokens: 15
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
             }
-          ],
-          max_tokens: 15
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${openAIApiKey}`
           }
-        }
-      );
+        );
   
-      return response.status === 200;
+        return response.status === 200;
+      } else {
+        // Default OpenAI validation
+        const response = await axios.post(
+          'https://api.openai.com/v1/chat/completions',
+          {
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "user",
+                content: "Hello!"
+              }
+            ],
+            max_tokens: 15
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            }
+          }
+        );
+  
+        return response.status === 200;
+      }
     } catch (error) {
-      console.error('OpenAI API key validation failed:', error);
+      console.error(`${modelType} API key validation failed:`, error);
       return false;
     }
   }

@@ -13,6 +13,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@langchain/core": "^0.3.39",
+    "@langchain/deepseek": "^0.0.1",
     "@langchain/openai": "^0.4.2",
     "@langchain/textsplitters": "^0.1.0",
     "@supabase/supabase-js": "^2.48.1",

@@ -1,6 +1,6 @@
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { PromptTemplate } from "@langchain/core/prompts";
-
+import { BaseLanguageModel, SupportedModels, LanguageModelConfig } from "@/domain/model/BaseLanguageModel";
 import { loadSummarizationChain } from "langchain/chains";
 import { ChatOpenAI } from "@langchain/openai";
 
@@ -21,17 +21,26 @@ interface ISummary {}
 
 export class Summary {
   private splitter: RecursiveCharacterTextSplitter;
-  private model: ChatOpenAI;
+  private model: SupportedModels;
 
-
-  constructor(openAIApiKey: string, summaryModel: string = "gpt-4o-mini") {
+  constructor(
+    modelFactory: BaseLanguageModel,
+    config: LanguageModelConfig
+  ) {
     this.splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 400,
       chunkOverlap: 20,
     });
-    this.model = new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0, apiKey: openAIApiKey });
-    //this.summarizationChain = loadSummarizationChain(model, { type: "map_reduce" });
+    this.model = modelFactory.createModel(config);
   }
+  // constructor(openAIApiKey: string, summaryModel: string = "gpt-4o-mini") {
+  //   this.splitter = new RecursiveCharacterTextSplitter({
+  //     chunkSize: 400,
+  //     chunkOverlap: 20,
+  //   });
+  //   this.model = new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0, apiKey: openAIApiKey });
+  //   //this.summarizationChain = loadSummarizationChain(model, { type: "map_reduce" });
+  // }
 
   
 
@@ -57,7 +66,7 @@ export class Summary {
 		  ###{text}###
 	  
 	  
-		  IMPORTANT!!!: WRITE IN SAME LANGUAGE OF THE ORIGINAL TEXT::`;
+		  IMPORTANT!!!: WRITE IN MARKDOWN AND IN SAME LANGUAGE OF THE ORIGINAL TEXT::`;
     const combinePrompt = new PromptTemplate({
       template,
       inputVariables: ["text"],
