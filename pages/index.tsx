@@ -205,6 +205,12 @@ export default function Home() {
             <i>To summarize a new video please enter your OpenAI API key in the <a href='#' onClick={toggleModal}>options menu</a>.</i>
           </div>}
           {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
+          
+          {!videoId && <ul className='alert alert-info mt-2 list-unstyled'>
+            <li> On the right panel click on video to show summary </li>
+            <li> On the right panel click on video title to show a mini-player</li>
+          </ul>
+          } 
           {videoId && <h1 className='youtube-title'>{videoTitle} </h1>}
           {videoId && <VideoSummarizer videoId={videoId}
             onVideoTitleUpdate={handleVideoTitleUpdate}

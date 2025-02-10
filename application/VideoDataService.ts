@@ -123,10 +123,11 @@ export class VideoDataService {
     let chapters = await this.getChapters(videoId);
     try {
       if (chapters && chapters !== null) {
-        chapters = await videoSegment.mergeChaptersWithTranscriptAsync(
+        const chaptersWithContent = await videoSegment.mergeChaptersWithTranscriptAsync(
           chapters,
           transcript
         );
+        chapters = videoSegment.mergeShortChapters(chaptersWithContent, 60);
       }
     } catch (error) {
       console.error(

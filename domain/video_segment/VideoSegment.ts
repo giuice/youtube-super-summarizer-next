@@ -95,8 +95,8 @@ export class VideoSegment {
     transcript: TranscriptEntry[]
   ): Promise<Chapter[]> {
     const transcriptInSeconds = transcript.map((entry) => ({
-      duration: entry.duration / 1000,
-      start: entry.start / 1000,
+      duration: entry.duration,
+      start: entry.start,
       text: entry.text,
     }));
 
@@ -119,13 +119,42 @@ export class VideoSegment {
     return mergedChapters;
   }
 
+  /**
+ * Merges chapters that are shorter than the specified threshold (in seconds).
+ */
+  public mergeShortChapters = (chapters: Chapter[], threshold: number = 60): Chapter[] => {
+    if (chapters.length === 0) return chapters;
+
+    const merged: Chapter[] = [];
+    let currentChapter = { ...chapters[0] };
+
+    for (let i = 1; i < chapters.length; i++) {
+      const nextChapter = chapters[i];
+      const gap = nextChapter.time - currentChapter.time;
+      if (gap < threshold) {
+        // Merge the next chapter into the current one:
+        // You may customize how you merge the title, here we simply join with " / "
+        currentChapter.title = `${currentChapter.title} / ${nextChapter.title}`;
+        // Append the content (ensuring a space separation)
+        currentChapter.content = (currentChapter.content + " " + nextChapter.content).trim();
+      } else {
+        // Save the current chapter and move to the next one.
+        merged.push(currentChapter);
+        currentChapter = { ...nextChapter };
+      }
+    }
+    // Push the final chapter
+    merged.push(currentChapter);
+    return merged;
+  };
+
   public mergeChaptersWithTranscript = (
     chapters: Chapter[],
     transcript: TranscriptEntry[]
   ): Chapter[] => {
     const transcriptInSeconds = transcript.map((entry) => ({
-      duration: entry.duration / 1000,
-      start: entry.start / 1000,
+      duration: entry.duration,
+      start: entry.start,
       text: entry.text,
     }));
 
