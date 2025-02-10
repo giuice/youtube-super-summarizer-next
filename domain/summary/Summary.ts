@@ -66,7 +66,7 @@ export class Summary {
 		  ###{text}###
 	  
 	  
-		  IMPORTANT!!!: WRITE IN MARKDOWN AND IN SAME LANGUAGE OF THE ORIGINAL TEXT::`;
+		  IMPORTANT!!!: WRITE IN SAME LANGUAGE OF THE ORIGINAL TEXT::`;
     const combinePrompt = new PromptTemplate({
       template,
       inputVariables: ["text"],
