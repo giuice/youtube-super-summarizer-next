@@ -70,6 +70,7 @@ export class VideoDataService {
         await axios.get(`/api/chapter?videoId=${videoId}`);
 
       if (response.status === 404 || response.status === 500) {
+        console.log(`Failed to fetch chapters for video ${videoId} }`);
         return null;
       }
 

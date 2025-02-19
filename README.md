@@ -14,6 +14,71 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Local Setup
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Create a .env.local file in the project root to add any required local configurations (e.g., Supabase API keys).
+3. Run the app locally:
+   ```bash
+   npm run dev
+   ```
+4. Access your app at [http://localhost:3000](http://localhost:3000).
+
+## Database structure
+```sql
+CREATE TABLE videos (
+  video_id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  author_name TEXT NOT NULL,
+  author_url TEXT NOT NULL,
+  thumbnail_url TEXT NOT NULL,
+  html TEXT NOT NULL
+);
+
+CREATE TABLE transcripts (
+  id SERIAL PRIMARY KEY,
+  video_id TEXT NOT NULL,
+  transcript JSONB NOT NULL, -- Array of {duration, start, text}
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE video_segments (
+  id SERIAL PRIMARY KEY,
+  video_id TEXT NOT NULL,
+  title TEXT,
+  start_time BIGINT NOT NULL, -- in milliseconds
+  duration BIGINT NOT NULL, -- in milliseconds
+  content TEXT NOT NULL,
+  is_chapter BOOLEAN NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE summary_chapters (
+  id SERIAL PRIMARY KEY,
+  video_id TEXT NOT NULL,
+  summary JSONB NOT NULL, -- Array of {text, minuteStarting, duration, formattedDuration, title}
+  model TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE summary_transcripts (
+  id SERIAL PRIMARY KEY, 
+  video_id TEXT NOT NULL,
+  summary JSONB NOT NULL, -- Array of {text, minuteStarting, duration, formattedDuration}
+  model TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+## Site URL using supabase
+[Site url](https://youtube-super-summarizer-next.vercel.app/)
+Supabase has 5 days to freeze databases...
+
+
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
 [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
