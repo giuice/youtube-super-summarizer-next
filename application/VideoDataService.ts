@@ -6,19 +6,25 @@ import ApiError from "@/utils/ApiError";
 import axios, { AxiosResponse } from "axios";
 import { TranscriptResponse } from "youtube-transcript";
 import { VideoSegment } from "@/domain/video_segment/VideoSegment";
-import VideoSegmentRepositorySupabase from "@/infra/supabase/VideoSegmentRepositorySupabase";
-import VideoRepositorySupabase from "@/infra/supabase/VideoRepositorySupabase";
 import SummaryService from "@/domain/summary/SummaryService";
-import { SummaryChapterRepositorySupabase, SummaryTranscriptRepositorySupabase } from "@/infra/supabase/SummaryRepositorySupabase";
 import { SummaryData } from "@/domain/summary/SummaryData";
 import VideoService from "@/domain/video/VideoService";
-import { faL } from "@fortawesome/free-solid-svg-icons";
+import { RepositoryFactory } from "@/utils/RepositoryFactory";
 
 
 export class VideoDataService {
-  protected static  readonly summaryChapterService = new SummaryService(new SummaryChapterRepositorySupabase);
-  protected static readonly summayTranscriptService = new SummaryService(new SummaryTranscriptRepositorySupabase);
-  protected static readonly videoService = new VideoService(new VideoRepositorySupabase());
+  // Use the RepositoryFactory to get repositories
+  protected static readonly summaryChapterService = new SummaryService(
+    RepositoryFactory.createSummaryChapterRepository()
+  );
+  
+  protected static readonly summayTranscriptService = new SummaryService(
+    RepositoryFactory.createSummaryTranscriptRepository()
+  );
+  
+  protected static readonly videoService = new VideoService(
+    RepositoryFactory.createVideoRepository()
+  );
 
   static async getVideoMetadata(videoId: string): Promise<VideoData> {
     try {

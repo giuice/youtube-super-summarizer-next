@@ -1,5 +1,25 @@
 # Changelog
 
+## March 22, 2025
+
+### Database Migration Implementation
+- **Added**: `infra/neon/NeonPostgres.ts` for Neon PostgreSQL connection management
+- **Added**: Repository implementations for all domain entities in `infra/neon/` directory:
+  - `VideoRepositoryNeon.ts`
+  - `TranscriptRepositoryNeon.ts`
+  - `SummaryRepositoryNeon.ts`
+  - `VideoSegmentRepositoryNeon.ts`
+- **Added**: `infra/neon/SchemaSetup.ts` utility for database table creation
+- **Added**: `infra/neon/MigrationUtility.ts` for data transfer from Supabase to Neon
+- **Added**: `utils/RepositoryFactory.ts` to dynamically select between Supabase and Neon repositories
+- **Updated**: `application/VideoDataService.ts` to use the RepositoryFactory pattern
+- **Fixed**: Missing `create` method in `VideoSegmentRepositoryNeon.ts`
+
+### Next Steps
+- Set up Neon PostgreSQL account and configure environment variables
+- Execute schema setup and data migration
+- Test application with the new database implementation
+
 ## March 21, 2025
 
 ### CRCT System Transition to Strategy Phase

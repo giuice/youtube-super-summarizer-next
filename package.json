@@ -16,6 +16,7 @@
     "@langchain/deepseek": "^0.0.1",
     "@langchain/openai": "^0.4.2",
     "@langchain/textsplitters": "^0.1.0",
+    "@neondatabase/serverless": "^0.10.4",
     "@supabase/supabase-js": "^2.48.1",
     "@types/node": "^20.4.9",
     "@types/react": "^18.2.20",
