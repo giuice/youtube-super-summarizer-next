@@ -23,8 +23,9 @@ export type DatabaseType = 'supabase' | 'neon';
  */
 export class RepositoryFactory {
   // Get the active database from environment variable or default to Supabase during transition
+  
   private static activeDatabase: DatabaseType = 
-    (process.env.ACTIVE_DATABASE as DatabaseType) || 'supabase';
+    (process.env.ACTIVE_DATABASE as DatabaseType) || 'neon';
 
   /**
    * Set the active database to use for all repositories

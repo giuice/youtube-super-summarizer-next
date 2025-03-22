@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { VideoData } from '@/domain/video/VideoData';
-import { VideoService } from '@/domain/video/VideoService';
-import { VideoRepositorySupabase } from '@/infra/supabase/VideoRepositorySupabase';
 import { VideoModal } from '@/components/VideoModal';
 import { Pagination } from '@/components/Pagination';
 
@@ -33,8 +31,18 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
   };
 
   const fetchLatestVideos = async (): Promise<VideoData[] | null> => {
-    const vService: VideoService = new VideoService(new VideoRepositorySupabase());
-    return await vService.getAll();
+    try {
+      const response = await fetch('/api/videos');
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Error fetching videos:', error);
+        return null;
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching videos:', error);
+      return null;
+    }
   };
 
   const getVideosByTitle = (title: string): VideoData[] => {

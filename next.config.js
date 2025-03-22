@@ -11,6 +11,23 @@ const nextConfig = {
       config.plugins.push(new WasmChunksFixPlugin());
     }
 
+    // if (!isServer) {
+    //   config.resolve.fallback = {
+    //     ...config.resolve.fallback,
+    //     fs: false,
+    //     net: false,
+    //     tls: false,
+    //     dns: false,
+    //     child_process: false,
+    //     path: false,
+    //     os: false,
+    //     crypto: false,
+    //     pg: false,
+    //     'pg-native': false,
+    //     'pg-hstore': false,
+    //   };
+    // }
+
     return config;
   },
   

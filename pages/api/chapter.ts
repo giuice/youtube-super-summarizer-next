@@ -5,7 +5,7 @@ import youtubeChapters from "get-youtube-chapters";
 
 
 // Retrieve the API key from environment variables
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY;
+const apiKey = process.env.GOOGLE_YOUTUBE_API_KEY;
 if (!apiKey) {
   throw new Error("Missing GOOGLE_YOUTUBE_API_KEY in env variables");
 }

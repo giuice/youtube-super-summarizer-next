@@ -51,9 +51,9 @@ export class MigrationUtility {
       summary.summaryTranscripts = summaryTranscriptsResult;
       
       // Migrate video segments
-      if (logProgress) console.log("Starting video segments migration...");
-      const videoSegmentsResult = await this.migrateVideoSegments(batchSize, validateData, logProgress);
-      summary.videoSegments = videoSegmentsResult;
+    //   if (logProgress) console.log("Starting video segments migration...");
+    //   const videoSegmentsResult = await this.migrateVideoSegments(batchSize, validateData, logProgress);
+    //   summary.videoSegments = videoSegmentsResult;
       
       if (logProgress) {
         console.log("Migration completed with the following results:");
@@ -327,110 +327,110 @@ export class MigrationUtility {
   /**
    * Migrate video segments from Supabase to Neon PostgreSQL
    */
-  private static async migrateVideoSegments(
-    batchSize: number,
-    validateData: boolean,
-    logProgress: boolean
-  ): Promise<MigrationResult> {
-    const result: MigrationResult = { total: 0, migrated: 0, failed: 0, errors: [] };
+//   private static async migrateVideoSegments(
+//     batchSize: number,
+//     validateData: boolean,
+//     logProgress: boolean
+//   ): Promise<MigrationResult> {
+//     const result: MigrationResult = { total: 0, migrated: 0, failed: 0, errors: [] };
     
-    try {
-      // Fetch all video segments from Supabase
-      const { data: segments, error } = await supabase.from("video_segments").select("*");
+//     try {
+//       // Fetch all video segments from Supabase
+//       const { data: segments, error } = await supabase.from("video_segments").select("*");
       
-      if (error) {
-        throw new Error(`Failed to fetch video segments: ${error.message}`);
-      }
+//       if (error) {
+//         throw new Error(`Failed to fetch video segments: ${error.message}`);
+//       }
       
-      result.total = segments.length;
+//       result.total = segments.length;
       
-      // Group segments by video_id
-      const segmentsByVideo: Record<string, VideoSegmentData[]> = {};
-      for (const segment of segments) {
-        if (!segmentsByVideo[segment.video_id]) {
-          segmentsByVideo[segment.video_id] = [];
-        }
-        segmentsByVideo[segment.video_id].push(segment);
-      }
+//       // Group segments by video_id
+//       const segmentsByVideo: Record<string, VideoSegmentData[]> = {};
+//       for (const segment of segments) {
+//         if (!segmentsByVideo[segment.video_id]) {
+//           segmentsByVideo[segment.video_id] = [];
+//         }
+//         segmentsByVideo[segment.video_id].push(segment);
+//       }
       
-      // Process each video's segments
-      const videoIds = Object.keys(segmentsByVideo);
-      for (let i = 0; i < videoIds.length; i += batchSize) {
-        const batchIds = videoIds.slice(i, i + batchSize);
+//       // Process each video's segments
+//       const videoIds = Object.keys(segmentsByVideo);
+//       for (let i = 0; i < videoIds.length; i += batchSize) {
+//         const batchIds = videoIds.slice(i, i + batchSize);
         
-        if (logProgress) {
-          console.log(`Processing video segments batch ${i / batchSize + 1}/${Math.ceil(videoIds.length / batchSize)}`);
-        }
+//         if (logProgress) {
+//           console.log(`Processing video segments batch ${i / batchSize + 1}/${Math.ceil(videoIds.length / batchSize)}`);
+//         }
         
-        // Process each video's segments
-        for (const videoId of batchIds) {
-          const videoSegments = segmentsByVideo[videoId];
+//         // Process each video's segments
+//         for (const videoId of batchIds) {
+//           const videoSegments = segmentsByVideo[videoId];
           
-          try {
-            // First, delete any existing segments for this video
-            await neon.query("DELETE FROM video_segments WHERE video_id = $1", [videoId]);
+//           try {
+//             // First, delete any existing segments for this video
+//             await neon.query("DELETE FROM video_segments WHERE video_id = $1", [videoId]);
             
-            // Then insert all segments for this video
-            const { client, done } = await neon.getClient();
+//             // Then insert all segments for this video
+//             const { client, done } = await neon.getClient();
             
-            try {
-              await client.query('BEGIN');
+//             try {
+//               await client.query('BEGIN');
               
-              for (const segment of videoSegments) {
-                const keys = Object.keys(segment);
-                const values = Object.values(segment);
-                const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
+//               for (const segment of videoSegments) {
+//                 const keys = Object.keys(segment);
+//                 const values = Object.values(segment);
+//                 const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
                 
-                const query = `
-                  INSERT INTO video_segments (${keys.join(', ')})
-                  VALUES (${placeholders})
-                `;
+//                 const query = `
+//                   INSERT INTO video_segments (${keys.join(', ')})
+//                   VALUES (${placeholders})
+//                 `;
                 
-                await client.query(query, values);
-              }
+//                 await client.query(query, values);
+//               }
               
-              await client.query('COMMIT');
+//               await client.query('COMMIT');
               
-              // Validate if requested
-              if (validateData) {
-                const validationResult = await neon.query(
-                  "SELECT COUNT(*) FROM video_segments WHERE video_id = $1",
-                  [videoId]
-                );
+//               // Validate if requested
+//               if (validateData) {
+//                 const validationResult = await neon.query(
+//                   "SELECT COUNT(*) FROM video_segments WHERE video_id = $1",
+//                   [videoId]
+//                 );
                 
-                const count = parseInt(validationResult.rows[0].count);
-                if (count !== videoSegments.length) {
-                  throw new Error(`Validation failed: Expected ${videoSegments.length} segments for video ${videoId}, but found ${count}`);
-                }
-              }
+//                 const count = parseInt(validationResult.rows[0].count);
+//                 if (count !== videoSegments.length) {
+//                   throw new Error(`Validation failed: Expected ${videoSegments.length} segments for video ${videoId}, but found ${count}`);
+//                 }
+//               }
               
-              result.migrated += videoSegments.length;
-            } catch (error) {
-              await client.query('ROLLBACK');
-              throw error;
-            } finally {
-              done();
-            }
-          } catch (error) {
-            result.failed += videoSegments.length;
-            result.errors.push({
-              id: videoId,
-              error: error instanceof Error ? error.message : String(error)
-            });
+//               result.migrated += videoSegments.length;
+//             } catch (error) {
+//               await client.query('ROLLBACK');
+//               throw error;
+//             } finally {
+//               done();
+//             }
+//           } catch (error) {
+//             result.failed += videoSegments.length;
+//             result.errors.push({
+//               id: videoId,
+//               error: error instanceof Error ? error.message : String(error)
+//             });
             
-            if (logProgress) {
-              console.error(`Failed to migrate segments for video ${videoId}:`, error);
-            }
-          }
-        }
-      }
+//             if (logProgress) {
+//               console.error(`Failed to migrate segments for video ${videoId}:`, error);
+//             }
+//           }
+//         }
+//       }
       
-      return result;
-    } catch (error) {
-      console.error("Video segments migration failed:", error);
-      throw error;
-    }
-  }
+//       return result;
+//     } catch (error) {
+//       console.error("Video segments migration failed:", error);
+//       throw error;
+//     }
+//   }
 }
 
 interface MigrationResult {

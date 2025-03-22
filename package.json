@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "migrate:neon": "ts-node scripts/migrate-to-neon.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
@@ -16,7 +19,6 @@
     "@langchain/deepseek": "^0.0.1",
     "@langchain/openai": "^0.4.2",
     "@langchain/textsplitters": "^0.1.0",
-    "@neondatabase/serverless": "^0.10.4",
     "@supabase/supabase-js": "^2.48.1",
     "@types/node": "^20.4.9",
     "@types/react": "^18.2.20",
@@ -28,6 +30,7 @@
     "langchain": "^0.3.15",
     "mongodb": "^5.2.0",
     "next": "^13.4.13",
+    "pg": "^8.14.1",
     "react": "18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "18.2.0",
@@ -38,5 +41,13 @@
     "tiktoken": "^1.0.10",
     "typescript": "^5.1.6",
     "youtube-transcript": "^1.2.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@types/jest": "^29.5.14",
+    "@types/pg": "^8.11.11",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
   }
 }

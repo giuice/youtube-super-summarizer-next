@@ -9,6 +9,7 @@ import SummaryChaptersList from './SummaryChaptersList';
 import { OpenAIModel } from '@/domain/model/OpenAIModel';
 import { DeepSeekModel } from '@/domain/model/DeepSeekModel';
 import { BaseLanguageModel } from '@/domain/model/BaseLanguageModel';
+import { ChatPopup } from './ChatPopup';
 
 // process.env.LANGCHAIN_TRACING = "true";
 interface VideoSummarizerProps {
@@ -28,6 +29,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 	const [apiError, setApiError] = useState<string>('');
 	const [loading, setLoading] = useState(true);
 	const [hasChapters, setHasChapters] = useState(false);
+	const [showChat, setShowChat] = useState(false);
 
 	useEffect(() => {
 		const fetchTranscript = async () => {
@@ -151,7 +153,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 	  };
 
 	return (
-		<div className="container">
+		<div className="container relative">
 			{loading && (
 				<div className="text-center">
 					{/* Add an encouraging phrase */}
@@ -160,12 +162,27 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 					<Spinner style={{ borderColor: '#c4302b', borderWidth: '0.2em' }} />
 				</div>
 			)}
-			<>{console.log('useChapters', useChapters)}</>
-			<>{console.log('hasChapters', hasChapters)}</>
 			{apiError && <div className="alert alert-danger">{apiError}</div>}
+			
+			{!loading && !apiError && (
+				<div className="mb-4">
+					<button
+						onClick={() => setShowChat(true)}
+						className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+					>
+						Chat with Video Content
+					</button>
+				</div>
+			)}
+			
 			{!hasChapters && <SummaryList summaryData={summaries} />}
 			{useChapters && hasChapters && <SummaryChaptersList summaryData={summaries} />}
-
+			
+			<ChatPopup
+				show={showChat}
+				onClose={() => setShowChat(false)}
+				videoId={videoId}
+			/>
 		</div>
 	);
 };

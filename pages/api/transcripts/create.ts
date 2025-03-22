@@ -1,9 +1,10 @@
 // pages/api/transcript_chapters/create.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import {TranscriptRepositorySupabase } from '@/infra/supabase/TranscriptRepositorySupabase';
+import { RepositoryFactory } from '@/utils/RepositoryFactory';
 import { TranscriptEntry, TranscriptData } from '@/domain/transcript/Transcript';
 import { TranscriptService } from '@/domain/transcript/TranscriptService';
-const transcriptService = new TranscriptService(new TranscriptRepositorySupabase());
+const transcriptService = RepositoryFactory.createTranscriptRepository();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {

@@ -2,9 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { TranscriptRepositorySupabase } from "@/infra/supabase/TranscriptRepositorySupabase";
 import { TranscriptData } from "@/domain/transcript/Transcript";
 import { TranscriptService } from "@/domain/transcript/TranscriptService";
-const transcriptService = new TranscriptService(
-  new TranscriptRepositorySupabase()
-);
+import { RepositoryFactory } from "@/utils/RepositoryFactory";
+const transcriptService = RepositoryFactory.createTranscriptRepository();
 
 export default async function handler(
   req: NextApiRequest,

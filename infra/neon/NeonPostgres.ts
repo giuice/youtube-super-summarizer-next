@@ -1,7 +1,10 @@
 import { Pool, PoolClient } from 'pg';
 
-// Environment variables should be set up for these values in production
-const NEON_CONNECTION_STRING = process.env.NEON_CONNECTION_STRING || 'postgresql://user:password@your-neon-endpoint.neon.tech/neondb?sslmode=require';
+const NEON_CONNECTION_STRING = process.env.NEON_CONNECTION_STRING;
+
+if (!NEON_CONNECTION_STRING) {
+  throw new Error('NEON_CONNECTION_STRING environment variable is not set');
+}
 
 // Create a connection pool
 const pool = new Pool({
@@ -12,7 +15,7 @@ const pool = new Pool({
 });
 
 // Log connection events for debugging
-pool.on('error', (err) => {
+pool.on('error', (err: Error) => {
   console.error('Unexpected error on idle client', err);
 });
 
