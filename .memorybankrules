@@ -1,0 +1,23 @@
+current_phase: "Strategy"
+last_action: "Completed Strategy phase planning, created instruction files for new features"
+next_steps: 
+  - "Begin execution of the chat feature implementation"
+  - "Initiate database migration to Neon PostgreSQL"
+  - "Transition to Execution phase for implementation"
+next_phase: "Execution"
+last_updated: "March 21, 2025"
+
+code_root_directories:
+  - "application"
+  - "components"
+  - "domain"
+  - "infra"
+  - "pages"
+  - "utils"
+
+excluded_directories:
+  - "chat_history"
+  - "images"
+  - "memory-bank"
+  - "public"
+  - "styles"
