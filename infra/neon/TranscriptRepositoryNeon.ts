@@ -67,26 +67,29 @@ export class TranscriptRepositoryNeon implements ITranscriptRepository {
   }
 
   async create(transcript: TranscriptData): Promise<void> {
-    try {
-      // Create a query with all the fields from TranscriptData
-      const keys = Object.keys(transcript);
-      const values = Object.values(transcript);
-      const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
-      
-      const query = `
-        INSERT INTO transcripts (${keys.join(', ')})
-        VALUES (${placeholders})
-      `;
-      
-      const result = await this.neon.query(query, values);
-      
-      if (result.rowCount === 0) {
-        return Promise.reject(new Error("Failed to create transcript"));
+    
+      try {
+        const processedData = {
+          video_id: transcript.video_id,
+          transcript: JSON.stringify(transcript.transcript),
+          created_at: transcript.created_at,
+        };
+    
+        const values = Object.values(processedData);
+        const query = `
+          INSERT INTO transcripts (video_id, transcript, created_at)
+          VALUES ($1, $2::jsonb, $3)
+        `;
+    
+        const result = await this.neon.query(query, values);
+        if (result.rowCount === 0) {
+          throw new Error("Failed to create transcript");
+        }
+      } catch (error) {
+        throw error;
       }
-    } catch (error) {
-      return Promise.reject(error);
-    }
-  }
+    
+}
 
   async findByVideoId(videoId: string): Promise<TranscriptData | null> {
     try {

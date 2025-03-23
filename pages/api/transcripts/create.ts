@@ -1,17 +1,15 @@
 // pages/api/transcript_chapters/create.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import {TranscriptRepositorySupabase } from '@/infra/supabase/TranscriptRepositorySupabase';
 import { RepositoryFactory } from '@/utils/RepositoryFactory';
-import { TranscriptEntry, TranscriptData } from '@/domain/transcript/Transcript';
-import { TranscriptService } from '@/domain/transcript/TranscriptService';
+import { TranscriptData } from '@/domain/transcript/Transcript';
 const transcriptService = RepositoryFactory.createTranscriptRepository();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-		console.log('dentro de transcript_chapters create'	)
-		console.log('req.body', req.body)
-      const transcript: TranscriptData = req.body;
+      console.log('dentro de transcript_chapters create')
+      console.log('req.body', req.body)
+      const transcript: TranscriptData = req.body;    
       await transcriptService.create(transcript);
       res.status(200).json({ message: 'transcript created successfully' });
     } catch (error) {

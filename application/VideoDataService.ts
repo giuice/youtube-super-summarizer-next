@@ -6,25 +6,22 @@ import ApiError from "@/utils/ApiError";
 import axios, { AxiosResponse } from "axios";
 import { TranscriptResponse } from "youtube-transcript";
 import { VideoSegment } from "@/domain/video_segment/VideoSegment";
-import SummaryService from "@/domain/summary/SummaryService";
 import { SummaryData } from "@/domain/summary/SummaryData";
-import VideoService from "@/domain/video/VideoService";
-import { RepositoryFactory } from "@/utils/RepositoryFactory";
 
 
 export class VideoDataService {
   // Use the RepositoryFactory to get repositories
-  protected static readonly summaryChapterService = new SummaryService(
-    RepositoryFactory.createSummaryChapterRepository()
-  );
-  
-  protected static readonly summayTranscriptService = new SummaryService(
-    RepositoryFactory.createSummaryTranscriptRepository()
-  );
-  
-  protected static readonly videoService = new VideoService(
-    RepositoryFactory.createVideoRepository()
-  );
+  // protected static readonly summaryChapterService = new SummaryService(
+  //   RepositoryFactory.createSummaryChapterRepository()
+  // );
+
+  // protected static readonly summayTranscriptService = new SummaryService(
+  //   RepositoryFactory.createSummaryTranscriptRepository()
+  // );
+
+  // protected static readonly videoService = new VideoService(
+  //   RepositoryFactory.createVideoRepository()
+  // );
 
   static async getVideoMetadata(videoId: string): Promise<VideoData> {
     try {
@@ -42,7 +39,13 @@ export class VideoDataService {
 
   static async saveVideoMetadata(videoId: string): Promise<void> {
     const videoData = await this.getVideoMetadata(videoId);
-    await this.videoService.create(videoData);
+    try {
+      
+      await axios.post('/api/videos/create', videoData);
+    } catch (error) {
+      console.error(`Failed to create video metadata: ${error}`);
+      throw new Error(`Failed to create video metadata: ${error}`);
+    }
   }
 
   static async getVideoTranscript(videoId: string): Promise<TranscriptEntry[]> {
@@ -53,7 +56,7 @@ export class VideoDataService {
       }
       const transcript = response.data as TranscriptResponse[];
       console.log('transcript first', transcript);
-      const entry =  transcript.map((entry: TranscriptResponse) => {
+      const entry = transcript.map((entry: TranscriptResponse) => {
         return {
           text: entry.text,
           start: entry.offset,
@@ -87,30 +90,31 @@ export class VideoDataService {
     }
   }
 
-  
-
   static async getSummaries(videoId: string): Promise<Summaries | null> {
-    console.log("getSummaries");
-    const chapter = await this.summaryChapterService.findByVideoId(videoId);
+    const chapterResponse = await axios.get(`/api/summary_chapters/findByVideoId?videoId=${videoId}`);
+    const chapter = chapterResponse.data;
     console.log("chapter", chapter);
-    const transcript = await this.summayTranscriptService.findByVideoId(videoId);
+
+    const transcriptResponse = await axios.get(`/api/summary_transcripts/findByVideoId?videoId=${videoId}`);
+    const transcript = transcriptResponse.data;
     console.log("transcript", transcript);
+
     if (chapter || transcript) {
       let summary: Summaries = {
         chapters: null,
         transcripts: null,
       };
-  
+
       if (chapter) {
         summary.chapters = chapter.summary;
       }
       if (transcript) {
         summary.transcripts = transcript.summary;
       }
-  
+
       return summary;
     }
-  
+
     return null;
   }
 
@@ -175,7 +179,7 @@ export class VideoDataService {
             }
           }
         );
-  
+
         return response.status === 200;
       } else {
         // Default OpenAI validation
@@ -198,7 +202,7 @@ export class VideoDataService {
             }
           }
         );
-  
+
         return response.status === 200;
       }
     } catch (error) {
@@ -209,43 +213,58 @@ export class VideoDataService {
 
   static async saveVideoTranscripts(videoId: string, transcriptEntry: TranscriptEntry[]): Promise<void> {
     const res = await axios.get(`/api/transcripts/findByVideoId?videoId=${videoId}`);
-    console.log('res transcript get 2', res);	
-    if(!res.data) {
-    const transData : TranscriptData = {
-			video_id: videoId,
-			transcript: transcriptEntry,
-			created_at: new Date() }
+    console.log('res transcript get 2', res);
+    if (!res.data) {
+      const transData: TranscriptData = {
+        video_id: videoId,
+        transcript: transcriptEntry,
+        created_at: new Date()
+      }
       try {
         const response = await axios.post('/api/transcripts/create', transData);
         return response.data;
       } catch (error) {
         throw new Error(`Failed to create summary: ${error}`);
       }
-    }		
+    }
   }
 
   static async saveSummaryChapters(videoId: string,
-    model:string,
+    model: string,
     summaries: SummaryViewModel[]) {
-      const summaryData: SummaryData = {
-        video_id: videoId,
-        model: model,
-        summary: summaries,
-        created_at: new Date(),
+    const summaryData: SummaryData = {
+      video_id: videoId,
+      model: model,
+      summary: summaries,
+      created_at: new Date(),
+    }
+    try {
+        
+        const response = await axios.post('/api/summary_chapters/create', summaryData);
+        return response.data;
+      } catch (error) {
+        console.error(`Failed to create summary chapter: ${error}`);
+        throw new Error(`Failed to create summary chapter: ${error}`);
       }
-      this.summaryChapterService.create(summaryData);
   }
 
   static async saveSummaryTranscripts(videoId: string,
-    model:string,
+    model: string,
     summaries: SummaryViewModel[]) {
-      const summaryData: SummaryData = {
-        video_id: videoId,
-        model: model,
-        summary: summaries,
-        created_at: new Date(),
-      }
-      this.summayTranscriptService.create(summaryData);
+    const summaryData: SummaryData = {
+      video_id: videoId,
+      model: model,
+      summary: summaries,
+      created_at: new Date(),
+    }
+    try {
+      
+      const response = await axios.post('/api/summary_transcripts/create', summaryData);
+      return response.data;
+    } catch (error) {
+      console.error(`Failed to create summary transcript: ${error}`);
+      throw new Error(`Failed to create summary transcript: ${error}`);
+    }
   }
 }
 
