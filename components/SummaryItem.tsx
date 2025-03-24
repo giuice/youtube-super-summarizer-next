@@ -13,8 +13,6 @@ interface SummaryItemProps {
 }
 
 const SummaryItem: React.FC<SummaryItemProps> = ({ summary,accumulatedDuration,  progressBarWidth }) => {
-
-  
   return (
     <div className="card mb-4 summary-item">
       <div className="card-body">

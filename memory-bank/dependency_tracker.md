@@ -40,6 +40,10 @@ components_video = REQ:application_video_service
 components_summary = REQ:domain_summary,domain_video_segment
 components_pagination = NO:domain_model
 
+# UI Framework and Theming
+shadcn_ui = PROV:components_video,components_summary,components_pagination,theme_provider
+theme_provider = REQ:shadcn_ui PROV:components_video,components_summary,components_pagination
+
 # API Endpoints
 api_youtube_metadata = REQ:domain_video,application_video_service
 api_transcript = REQ:domain_transcript
@@ -83,6 +87,10 @@ utils_repository_factory: utils/RepositoryFactory.ts
 components_video: components/VideoSummarizer.tsx,components/VideoModal.tsx,components/VideoTitleList.tsx
 components_summary: components/SummaryList.tsx,components/SummaryItem.tsx,components/SummaryChaptersList.tsx,components/SummaryChaptersItem.tsx,components/DocumentSummarizer.tsx
 components_pagination: components/Pagination.tsx
+
+# UI Framework and Theming
+shadcn_ui: components/ui
+theme_provider: components/theme-provider.tsx
 
 # API Endpoints
 api_youtube_metadata: pages/api/youtube_metadata.ts

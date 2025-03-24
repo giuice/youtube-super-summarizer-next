@@ -8,11 +8,13 @@
 3. User experience improvements
 
 ## Next Steps:
-1. Add typing indicators to chat UI (optional enhancement)
-2. Consider implementing chat history persistence
-3. Monitor Neon PostgreSQL performance in production
+1. Fix chat layout and functioing
+2. Add typing indicators to chat UI (optional enhancement)
+3. Consider implementing chat history persistence
+
 
 ## Task Prioritization:
+**High Priority:** Fix chat layout and functioning
 1. **Medium Priority:** Chat feature UI enhancements (typing indicators)
 2. **Medium Priority:** Chat history persistence implementation
 3. **Low Priority:** Performance monitoring and optimization

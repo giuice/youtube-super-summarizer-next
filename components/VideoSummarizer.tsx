@@ -179,7 +179,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 				</div>
 			)}
 			
-			{!hasChapters && summaries && <SummaryList summaryData={summaries} />}
+			{!hasChapters && <SummaryList summaryData={summaries} />}
 			{useChapters && hasChapters && <SummaryChaptersList summaryData={summaries} />}
 			
 			<ChatPopup

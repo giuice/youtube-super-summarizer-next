@@ -1,4 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -15,6 +24,16 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +47,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
+    setIsTyping(true);
 
     try {
       const response = await fetch('/api/chat', {
@@ -35,12 +55,12 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
         headers: {
           'Content-Type': 'application/json',
         },
-          body: JSON.stringify({
-            message: inputMessage,
-            videoId,
-            history: messages,
-            apiKey: localStorage.getItem('openai_api_key') || ''
-          }),
+        body: JSON.stringify({
+          message: inputMessage,
+          videoId,
+          history: messages,
+          apiKey: localStorage.getItem('openai_api_key') || ''
+        }),
       });
 
       if (!response.ok) {
@@ -48,12 +68,18 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
       }
 
       const data = await response.json();
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: data.response
-      }]);
+      
+      setTimeout(() => {
+        setIsTyping(false);
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: data.response
+        }]);
+      }, 700);
+      
     } catch (error) {
       console.error('Error in chat:', error);
+      setIsTyping(false);
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: 'Sorry, I encountered an error processing your request.'
@@ -63,54 +89,91 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
     }
   };
 
-  if (!show) return null;
-
   return (
-    <div className="fixed bottom-4 right-4 w-96 h-[500px] bg-white rounded-lg shadow-lg flex flex-col">
-      <div className="flex justify-between items-center p-4 border-b">
-        <h3 className="text-lg font-semibold">Chat with Video Content</h3>
-        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-          ✕
-        </button>
-      </div>
-      
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`p-2 rounded-lg ${
-              message.role === 'user'
-                ? 'bg-blue-100 ml-auto max-w-[80%]'
-                : 'bg-gray-100 max-w-[80%]'
-            }`}
-          >
-            {message.content}
-          </div>
-        ))}
-        {isLoading && (
-          <div className="text-gray-500 italic">Processing your request...</div>
-        )}
-      </div>
+    <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col">
+        <DialogHeader>
+          <DialogTitle>Chat with Video Content</DialogTitle>
+          <DialogDescription>
+            Ask questions about the video content
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.length === 0 && (
+            <div className="text-center text-muted-foreground mt-10">
+              <p>Ask questions about the video content!</p>
+              <p className="text-sm mt-2">Examples:</p>
+              <ul className="text-sm mt-1 space-y-1">
+                <li>• What is the main topic?</li>
+                <li>• Summarize the key points</li>
+                <li>• Explain the concept at 2:35</li>
+              </ul>
+            </div>
+          )}
+          
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              {message.role === 'assistant' && (
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2 flex-shrink-0">
+                  AI
+                </div>
+              )}
+              <div
+                className={`p-3 rounded-lg max-w-[75%] ${
+                  message.role === 'user'
+                    ? 'bg-primary text-primary-foreground ml-2'
+                    : 'bg-muted'
+                }`}
+              >
+                {message.content}
+              </div>
+              {message.role === 'user' && (
+                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground ml-2 flex-shrink-0">
+                  You
+                </div>
+              )}
+            </div>
+          ))}
+          
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2 flex-shrink-0">
+                AI
+              </div>
+              <div className="bg-muted p-3 rounded-lg">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t">
-        <div className="flex space-x-2">
-          <input
+        <form onSubmit={handleSubmit} className="border-t p-4 flex gap-2">
+          <Input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Ask about the video content..."
-            className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
+            className="flex-1"
           />
-          <button
-            type="submit"
-            disabled={isLoading || !inputMessage.trim()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300"
-          >
-            Send
-          </button>
-        </div>
-      </form>
-    </div>
+          <Button type="submit" disabled={isLoading || !inputMessage.trim()}>
+            {isLoading ? (
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-foreground" />
+            ) : (
+              'Send'
+            )}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };

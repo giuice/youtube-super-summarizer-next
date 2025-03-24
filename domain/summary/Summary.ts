@@ -49,7 +49,7 @@ export class Summary {
   ): Promise<SummaryViewModel[]> {
     const output = await this.splitter.createDocuments([transcript.text]);
 
-    const mapTemplate = `TLDR; the text delimited by triple Hashes, The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+    const mapTemplate = `Could you please provide a concise and comprehensive summary of the given text? The summary should capture the main points and key details of the text while conveying the author's intended meaning accurately. Please ensure that the summary is well-organized and easy to read, with clear headings and subheadings to guide the reader through each section. The length of the summary should be appropriate to capture the main points and key details of the text, without including unnecessary information or becoming overly long.:
 	  
 
 		  ###{text}###
@@ -60,7 +60,7 @@ export class Summary {
       template: mapTemplate,
       inputVariables: ["text"],
     });
-    const template = `TLDR; the text delimited by triple Hashes, The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+    const template = `Could you please provide a concise and comprehensive summary of the given text? The summary should capture the main points and key details of the text while conveying the author's intended meaning accurately. Please ensure that the summary is well-organized and easy to read, with clear headings and subheadings to guide the reader through each section. The length of the summary should be appropriate to capture the main points and key details of the text, without including unnecessary information or becoming overly long.:
 	  
 
 		  ###{text}###
@@ -98,7 +98,7 @@ export class Summary {
     chapter: SummaryViewModel
   ): Promise<SummaryViewModel[]> {
     const output = await this.splitter.createDocuments([chapter.text]);
-    const mapTemplate = `TLDR; the text delimited by triple Hashes, The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+    const mapTemplate = `Could you please provide a concise and comprehensive summary of the given text? The summary should capture the main points and key details of the text while conveying the author's intended meaning accurately. Please ensure that the summary is well-organized and easy to read, with clear headings and subheadings to guide the reader through each section. The length of the summary should be appropriate to capture the main points and key details of the text, without including unnecessary information or becoming overly long.:
 		  Title: ${chapter.title}
 	  
 		  ###{text}###
@@ -109,7 +109,7 @@ export class Summary {
       template: mapTemplate,
       inputVariables: ["text"],
     });
-    const template = `TLDR; the text delimited by triple Hashes, The focus should be on identifying and analyzing the strategies the author uses to make their point, rather than summarizing the passage:
+    const template = `Could you please provide a concise and comprehensive summary of the given text? The summary should capture the main points and key details of the text while conveying the author's intended meaning accurately. Please ensure that the summary is well-organized and easy to read, with clear headings and subheadings to guide the reader through each section. The length of the summary should be appropriate to capture the main points and key details of the text, without including unnecessary information or becoming overly long.:
 		  Title: ${chapter.title}
 	  
 		  ###{text}###
