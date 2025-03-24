@@ -40,13 +40,17 @@ infra_migration_utility = REQ:infra_neon,infra_supabase
 utils_repository_factory = REQ:infra_summary_repo_supabase,infra_transcript_repo_supabase,infra_video_repo_supabase,infra_video_segment_repo_supabase,infra_summary_repo_neon,infra_transcript_repo_neon,infra_video_repo_neon,infra_video_segment_repo_neon PROV:application_video_service
 
 # UI Components
-components_video = REQ:application_video_service
+components_video = REQ:application_video_service,shadcn_ui
 components_summary = REQ:domain_summary,domain_video_segment
 components_pagination = NO:domain_model
+components_chat = REQ:theme_provider,shadcn_ui
 
 # UI Framework and Theming
-shadcn_ui = REQ:tailwindcss_framework PROV:components_video,components_summary,components_pagination,theme_provider
-theme_provider = REQ:shadcn_ui,tailwindcss_framework PROV:components_video,components_summary,components_pagination
+shadcn_ui = REQ:tailwindcss_framework PROV:components_video,components_summary,components_pagination,theme_provider,components_chat
+theme_provider = REQ:shadcn_ui,tailwindcss_framework,next_themes PROV:components_video,components_summary,components_pagination,components_chat
+next_themes = PROV:theme_provider
+theme_toggle = REQ:shadcn_ui,next_themes,lucide_react PROV:components_chat
+lucide_react = PROV:theme_toggle
 
 # API Endpoints
 api_youtube_metadata = REQ:domain_video,application_video_service,nextjs_framework
@@ -95,10 +99,14 @@ utils_repository_factory: utils/RepositoryFactory.ts
 components_video: components/VideoSummarizer.tsx,components/VideoModal.tsx,components/VideoTitleList.tsx
 components_summary: components/SummaryList.tsx,components/SummaryItem.tsx,components/SummaryChaptersList.tsx,components/SummaryChaptersItem.tsx,components/DocumentSummarizer.tsx
 components_pagination: components/Pagination.tsx
+components_chat: components/ChatPopup.tsx
 
 # UI Framework and Theming
-shadcn_ui: components/ui
-theme_provider: components/theme-provider.tsx
+shadcn_ui: components/ui/dialog.tsx,components/ui/avatar.tsx,components/ui/button.tsx,components/ui/card.tsx,components/ui/input.tsx
+theme_provider: components/ThemeProvider.tsx
+theme_toggle: components/ThemeToggle.tsx
+next_themes: next-themes@latest
+lucide_react: lucide-react@latest
 
 # API Endpoints
 api_youtube_metadata: pages/api/youtube_metadata.ts

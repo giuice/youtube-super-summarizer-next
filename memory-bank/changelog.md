@@ -6,14 +6,25 @@
 - Support for Next.js 15.2.3
 - Support for Tailwind CSS 4.0.15
 - Support for React 19.0.0
+- Theme system implementation with next-themes
+- ThemeProvider component for centralized theme management
+- ThemeToggle component with light/dark mode switching
+- Theme configuration with custom light/dark theme variables
 
 ### Changed
 - Updated development server to use turbopack with flag `--turbopack`
 - Updated dependency tracker to include framework versions
 - Updated TypeScript to 5.8.2
+- Updated _app.tsx to include ThemeProvider wrapper
 
 ### Removed
 - Legacy postcss configuration
+
+## March 24, 2025
+- Removed react-bootstrap dependency
+- Migrated VideoModal component from react-bootstrap Modal to shadcn Dialog
+- Updated dependency tracker to reflect UI component changes
+- Updated component dependencies to use shadcn UI system
 
 ## March 22, 2025
 

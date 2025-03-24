@@ -167,7 +167,7 @@ export default function Home() {
                     onChange={handleSelectChange}
                   >
                     <option value="gpt-4o-mini">gpt-4o-mini</option>
-                    <option value="deepseek-reasoner">deepseek-reasoner</option>
+                    <option value="deepseek-chat">deepseek-chat</option>
                     {/* <option value="text-davinci-003">davinci-003</option>
                     <option value="text-babbage-001">babbage-001</option> */}
                   </select>

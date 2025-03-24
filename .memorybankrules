@@ -1,8 +1,8 @@
 current_phase: "Strategy"
-last_action: "Created instruction files for theme provider, component migration, semantic search, and chat enhancements"
+last_action: "Updated dependencies after migrating VideoModal to shadcn Dialog and removing react-bootstrap"
 next_steps: 
-  - "[HIGH] Implement theme provider and configuration"
-  - "[HIGH] Migrate components to Shadcn UI, starting with ChatPopup"
+  - "[HIGH] Continue component migration to Shadcn UI, starting with ChatPopup"
+  - "[HIGH] Test theme system implementation across all components"
   - "[MEDIUM] Implement semantic search for transcript content in chat"
   - "[MEDIUM] Enhance chat experience with typing indicators and history persistence"
   - "Monitor database performance in production"
