@@ -4,6 +4,10 @@
 # Dependencies: REQ=requires, PROV=provides to, DOC=documentation
 # Additional types: MUT=mutual dependency, SEM=semantic relationship, NO=verified no dependency
 
+# Core Framework
+nextjs_framework = PROV:components_video,components_summary,components_pagination,api_youtube_metadata,api_transcript,api_chapter,api_summary_transcripts
+tailwindcss_framework = PROV:theme_provider,shadcn_ui
+
 # Domain Layer
 domain_model = PROV:domain_summary,domain_transcript,domain_video,domain_video_segment
 domain_summary = REQ:domain_model PROV:infra_summary_repo_supabase,infra_summary_repo_neon,infra_supabase
@@ -41,17 +45,21 @@ components_summary = REQ:domain_summary,domain_video_segment
 components_pagination = NO:domain_model
 
 # UI Framework and Theming
-shadcn_ui = PROV:components_video,components_summary,components_pagination,theme_provider
-theme_provider = REQ:shadcn_ui PROV:components_video,components_summary,components_pagination
+shadcn_ui = REQ:tailwindcss_framework PROV:components_video,components_summary,components_pagination,theme_provider
+theme_provider = REQ:shadcn_ui,tailwindcss_framework PROV:components_video,components_summary,components_pagination
 
 # API Endpoints
-api_youtube_metadata = REQ:domain_video,application_video_service
-api_transcript = REQ:domain_transcript
-api_chapter = REQ:domain_video_segment
-api_summary_transcripts = REQ:domain_summary,domain_transcript
+api_youtube_metadata = REQ:domain_video,application_video_service,nextjs_framework
+api_transcript = REQ:domain_transcript,nextjs_framework
+api_chapter = REQ:domain_video_segment,nextjs_framework
+api_summary_transcripts = REQ:domain_summary,domain_transcript,nextjs_framework
 ---TRACKER_END---
 
 ---KEYS_START---
+# Core Framework
+nextjs_framework: next@15.2.3
+tailwindcss_framework: tailwindcss@4.0.15
+
 # Domain Layer
 domain_model: domain/model
 domain_summary: domain/summary

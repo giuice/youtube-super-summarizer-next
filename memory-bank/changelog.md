@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Support for Next.js 15.2.3
+- Support for Tailwind CSS 4.0.15
+- Support for React 19.0.0
+
+### Changed
+- Updated development server to use turbopack with flag `--turbopack`
+- Updated dependency tracker to include framework versions
+- Updated TypeScript to 5.8.2
+
+### Removed
+- Legacy postcss configuration
+
 ## March 22, 2025
 
 ### Database Migration Completed

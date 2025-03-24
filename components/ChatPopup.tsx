@@ -118,7 +118,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {message.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2 flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2 shrink-0">
                   AI
                 </div>
               )}
@@ -132,7 +132,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
                 {message.content}
               </div>
               {message.role === 'user' && (
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground ml-2 flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground ml-2 shrink-0">
                   You
                 </div>
               )}
@@ -141,7 +141,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
           
           {isTyping && (
             <div className="flex justify-start">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2 flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground mr-2 shrink-0">
                 AI
               </div>
               <div className="bg-muted p-3 rounded-lg">
