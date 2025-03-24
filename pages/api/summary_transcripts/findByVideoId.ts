@@ -17,10 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       const summary = await summaryTranscriptService.findByVideoId(videoId);
       
-      // if (!summary) {
-      //   return res.status(404).json(null);
-      // }
-      
       res.status(200).json(summary);
     } catch (error) {
       res.status(500).json({ message: 'Error finding summary transcript', error: error });

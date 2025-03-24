@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { videoId } = req.query;
-
+  console.log('videoId from api', videoId)
   if (!videoId) {
     res.status(400).json({ error: 'Video ID is required' });
     return;
@@ -18,6 +18,7 @@ export default async function handler(
     const transcript = await YoutubeTranscript.fetchTranscript(videoId as string) ;
     res.status(200).json(transcript);
   } catch (error) {
+    console.error('Error fetching transcript:', error);
     res.status(500).json({ error: 'Failed to fetch transcript' });
   }
 }

@@ -35,11 +35,12 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message: inputMessage,
-          videoId,
-          history: messages
-        }),
+          body: JSON.stringify({
+            message: inputMessage,
+            videoId,
+            history: messages,
+            apiKey: localStorage.getItem('openai_api_key') || ''
+          }),
       });
 
       if (!response.ok) {

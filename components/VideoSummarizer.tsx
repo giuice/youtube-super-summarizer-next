@@ -39,10 +39,13 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 					onVideoTitleUpdate(metadata.title);
 				}
 				const summariesObj: Summaries | null = await VideoDataService.getSummaries(videoId);
+
 				const transcripts = summariesObj?.transcripts;
 				const chapters = summariesObj?.chapters;
 				if (isVideoSummarized(summariesObj, useChapters)) {
+
 					if (transcripts || (!chapters && useChapters)){
+						console.log('has transcripts')
 						if (transcripts)
 						{
 							setSummaries(transcripts);
@@ -50,6 +53,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 						}
 					}			
 					if (chapters && useChapters){
+						console.log('has chapters')
 						setSummaries(chapters);
 						setHasChapters(true);
 					}
@@ -124,7 +128,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 			temperature: 0
 		});
 		const newSummaries: SummaryViewModel[] = [];
-	    console.log('transcript', transcript);
+	    console.log('doSummarizeTranscript', transcript);
 		for (const t of transcript) {
 		  const summarizedTranscriptObj = await summarizer.summarizeTranscript(t);
 		  newSummaries.push(...summarizedTranscriptObj);
@@ -175,7 +179,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({ videoId, useCh
 				</div>
 			)}
 			
-			{!hasChapters && <SummaryList summaryData={summaries} />}
+			{!hasChapters && summaries && <SummaryList summaryData={summaries} />}
 			{useChapters && hasChapters && <SummaryChaptersList summaryData={summaries} />}
 			
 			<ChatPopup

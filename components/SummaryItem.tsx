@@ -14,7 +14,7 @@ interface SummaryItemProps {
 
 const SummaryItem: React.FC<SummaryItemProps> = ({ summary,accumulatedDuration,  progressBarWidth }) => {
 
- 
+  
   return (
     <div className="card mb-4 summary-item">
       <div className="card-body">
@@ -39,10 +39,9 @@ const SummaryItem: React.FC<SummaryItemProps> = ({ summary,accumulatedDuration, 
             </div>
           </div>
         </div>
-        {/* <p className="mt-3 mb-0 summary-text">{summary.text}</p> */}
          {/* Use ReactMarkdown to render markdown as HTML */}
          <ReactMarkdown remarkPlugins={[remarkGfm]} className="mt-3 mb-0 summary-text">
-          {summary.text}
+           {summary.text} 
         </ReactMarkdown>
       </div>
     </div>

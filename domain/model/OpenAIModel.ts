@@ -3,28 +3,15 @@ import { ChatOpenAI } from "@langchain/openai";
 import { MessageContent, MessageContentText } from "@langchain/core/messages";
 
 export class OpenAIModel extends BaseLanguageModel {
-  private model: ChatOpenAI;
-
-  constructor() {
-    super();
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error('OPENAI_API_KEY environment variable is not set');
-    }
-    
-    this.model = this.createModel({
-      apiKey,
-      modelName: "gpt-3.5-turbo",
-      temperature: 0.7
-    });
-  }
+  private model!: ChatOpenAI; // Definite assignment assertion
 
   createModel(config: LanguageModelConfig): ChatOpenAI {
-    return new ChatOpenAI({
+    this.model = new ChatOpenAI({
       modelName: config.modelName,
       temperature: config.temperature ?? 0,
       apiKey: config.apiKey,
     });
+    return this.model;
   }
 
   async chat(messages: { role: string; content: string; }[]): Promise<string> {

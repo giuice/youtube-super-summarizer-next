@@ -44,15 +44,13 @@ export class SchemaSetup {
   private static async createVideosTable(): Promise<void> {
     const query = `
       CREATE TABLE IF NOT EXISTS videos (
-        id SERIAL PRIMARY KEY,
-        video_id TEXT UNIQUE NOT NULL,
+        video_id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
-        author TEXT,
-        description TEXT,
-        thumbnail TEXT,
-        duration INTEGER,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        author_name TEXT NOT NULL,
+        author_url TEXT NOT NULL,
+        thumbnail_url TEXT NOT NULL,
+        html TEXT NOT NULL
       );
     `;
     
@@ -66,12 +64,9 @@ export class SchemaSetup {
     const query = `
       CREATE TABLE IF NOT EXISTS transcripts (
         id SERIAL PRIMARY KEY,
-        video_id TEXT UNIQUE NOT NULL,
+        video_id TEXT NOT NULL,
         transcript JSONB NOT NULL,
-        language TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (video_id) REFERENCES videos(video_id) ON DELETE CASCADE
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
     
@@ -84,13 +79,11 @@ export class SchemaSetup {
   private static async createSummaryTable(tableName: string): Promise<void> {
     const query = `
       CREATE TABLE IF NOT EXISTS ${tableName} (
-        id SERIAL PRIMARY KEY,
-        video_id TEXT UNIQUE NOT NULL,
-        summary TEXT NOT NULL,
+        id SERIAL PRIMARY KEY, 
+        video_id TEXT NOT NULL,
+        summary JSONB NOT NULL,
         model TEXT NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (video_id) REFERENCES videos(video_id) ON DELETE CASCADE
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
     
@@ -106,12 +99,11 @@ export class SchemaSetup {
         id SERIAL PRIMARY KEY,
         video_id TEXT NOT NULL,
         title TEXT,
-        start_time FLOAT NOT NULL,
-        end_time FLOAT NOT NULL,
-        segment_type TEXT NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (video_id) REFERENCES videos(video_id) ON DELETE CASCADE
+        start_time BIGINT NOT NULL,
+        duration BIGINT NOT NULL,
+        content TEXT NOT NULL,
+        is_chapter BOOLEAN NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
       
       -- Add index for faster lookups by video_id

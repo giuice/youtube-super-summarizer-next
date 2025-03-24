@@ -1,6 +1,6 @@
 import { Pool, PoolClient } from 'pg';
 
-const NEON_CONNECTION_STRING = process.env.NEON_CONNECTION_STRING;
+const NEON_CONNECTION_STRING ="postgresql://neondb_owner:npg_6RDoITvmCP8V@ep-quiet-tree-a5a8nlpk-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require" // process.env.NEON_CONNECTION_STRING;
 
 if (!NEON_CONNECTION_STRING) {
   throw new Error('NEON_CONNECTION_STRING environment variable is not set');
@@ -9,9 +9,9 @@ if (!NEON_CONNECTION_STRING) {
 // Create a connection pool
 const pool = new Pool({
   connectionString: NEON_CONNECTION_STRING,
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // How long a client is allowed to remain idle before being closed
-  connectionTimeoutMillis: 2000, // How long to wait for a connection to become available
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000
 });
 
 // Log connection events for debugging

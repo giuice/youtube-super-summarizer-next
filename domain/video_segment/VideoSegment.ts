@@ -55,7 +55,7 @@ export class VideoSegment {
       currentIntervalText: "",
       currentDuration: 0,
     };
-
+    console.log('segmentTranscriptByDuration', transcript);
     const finalAccumulator = transcript.reduce((accumulator, item) => {
       while (item.start >= accumulator.currentIntervalStart + segmentDuration) {
         accumulator.results.push({

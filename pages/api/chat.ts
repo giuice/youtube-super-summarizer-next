@@ -23,7 +23,17 @@ export default async function handler(
     const transcriptService = new TranscriptService(
       RepositoryFactory.createTranscriptRepository()
     );
+    const apiKey = chatRequest.apiKey;
+    if (!apiKey) {
+      throw new Error('API key is required');
+    }
+    
     const languageModel = new OpenAIModel();
+    languageModel.createModel({
+      apiKey,
+      modelName: "gpt-4o-mini",
+      temperature: 0.4
+    });
     const chatService = new ChatService(transcriptService, languageModel);
 
     // Process the chat request

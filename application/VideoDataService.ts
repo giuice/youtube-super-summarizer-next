@@ -111,7 +111,7 @@ export class VideoDataService {
       if (transcript) {
         summary.transcripts = transcript.summary;
       }
-
+      
       return summary;
     }
 
@@ -121,9 +121,13 @@ export class VideoDataService {
 
 
   static async getVideoTranscripts(videoId: string): Promise<Summaries> {
+    // First ensure video metadata exists
+    //await this.saveVideoMetadata(videoId);
+    
     const transcript = await this.getVideoTranscript(videoId);
-
-    //not waiting for the promise to resolve here, its not interesting to the user
+    if(!transcript || transcript.length === 0) {
+      throw new Error(`Failed to fetch transcript for video ${videoId}. Maybe  Please try later again.`);
+    }
     await this.saveVideoTranscripts(videoId, transcript);
     const videoSegment = new VideoSegment();
     if (!transcript) {
@@ -148,6 +152,7 @@ export class VideoDataService {
     const segTranscript = await videoSegment.segmentTranscriptByDuration(
       transcript
     );
+    console.log("segTranscript", segTranscript);
     const segmentChapters = chapters
       ? await videoSegment.segmentChapters(chapters)
       : null;

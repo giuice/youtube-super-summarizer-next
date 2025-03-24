@@ -1,6 +1,7 @@
 import neon from "./NeonPostgres";
 import { TranscriptData } from "@/domain/transcript/Transcript";
 import { ITranscriptRepository } from "@/domain/transcript/Transcript";
+import parseJsonFields from "@/domain/utils/ParseJsonFields";
 
 export class TranscriptRepositoryNeon implements ITranscriptRepository {
   private readonly neon = neon;
@@ -101,8 +102,7 @@ export class TranscriptRepositoryNeon implements ITranscriptRepository {
       if (!result.rows || result.rows.length === 0) {
         return null;
       }
-      
-      return result.rows[0] as TranscriptData;
+      return parseJsonFields(result.rows[0], ['transcript']) as TranscriptData;
     } catch (error) {
       return Promise.reject(error);
     }

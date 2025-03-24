@@ -18,6 +18,8 @@ export default async function handler(
       }
       const transcript: TranscriptData | null =
         await transcriptService.findByVideoId(videoId as string);
+     
+        
       res.status(200).json(transcript);
     } catch (error) {
       res

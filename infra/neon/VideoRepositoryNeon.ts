@@ -23,23 +23,33 @@ export class VideoRepositoryNeon implements IVideoRepository {
 
   async create(video: VideoData): Promise<void> {
     try {
-      // Create a query with all the fields from VideoData
-      const keys = Object.keys(video);
-      const values = Object.values(video);
-      const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
-      
       const query = `
-        INSERT INTO videos (${keys.join(', ')})
-        VALUES (${placeholders})
+        INSERT INTO videos (
+          video_id, 
+          title, 
+          author_name, 
+          author_url, 
+          thumbnail_url, 
+          html
+        ) VALUES ($1, $2, $3, $4, $5, $6)
       `;
+      
+      const values = [
+        video.video_id,
+        video.title,
+        video.author_name,
+        video.author_url,
+        video.thumbnail_url,
+        video.html
+      ];
 
       const result = await this.neon.query(query, values);
       
       if (result.rowCount === 0) {
-        return Promise.reject(new Error("Failed to create video"));
+        throw new Error("Failed to create video");
       }
     } catch (error) {
-      return Promise.reject(error);
+      throw error;
     }
   }
 

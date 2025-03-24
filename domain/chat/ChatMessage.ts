@@ -7,6 +7,7 @@ export interface ChatRequest {
     message: string;
     videoId: string;
     history: ChatMessage[];
+    apiKey: string;
 }
 
 export interface ChatResponse {

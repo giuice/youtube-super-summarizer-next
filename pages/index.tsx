@@ -16,7 +16,7 @@ export default function Home() {
   const [validationError, setValidationError] = useState('');
   const [shouldFetchVideos, setShouldFetchVideos] = useState(true);
   const [useChapters, setUseChapters] = useState(true);
-  const [selectedModel, setSelectedModel] = useState('gpt-3.5-turbo');
+  const [selectedModel, setSelectedModel] = useState('gpt-4o-mini');
   const [apiKey, setApiKey] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 

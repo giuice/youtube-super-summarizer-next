@@ -1,7 +1,7 @@
 import neon from "./NeonPostgres";
 import { SummaryData } from "@/domain/summary/SummaryData";
 import { ISummaryRepository } from "@/domain/summary/ISummaryRepository";
-
+import  parseJsonFields  from "@/domain/utils/ParseJsonFields";
 export class SummaryRepositoryNeon implements ISummaryRepository {
   constructor(private summaryTable: string) {}
   
@@ -69,8 +69,14 @@ export class SummaryRepositoryNeon implements ISummaryRepository {
   async create(summary: SummaryData): Promise<void> {
     try {
       // Create a query with all the fields from SummaryData
-      const keys = Object.keys(summary);
-      const values = Object.values(summary);
+      const processedData = {
+        video_id: summary.video_id,
+        model: summary.model,
+        summary: JSON.stringify(summary.summary),
+        created_at: summary.created_at || new Date(),
+      };
+      const keys = Object.keys(processedData);
+      const values = Object.values(processedData);
       const placeholders = keys.map((_, i) => `$${i + 1}`).join(', ');
       
       const query = `
@@ -99,7 +105,7 @@ export class SummaryRepositoryNeon implements ISummaryRepository {
         return null;
       }
       
-      return result.rows[0] as SummaryData;
+      return parseJsonFields(result.rows[0], ['summary']) as SummaryData;
     } catch (error) {
       return Promise.reject(error);
     }
