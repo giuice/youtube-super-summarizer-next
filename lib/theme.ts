@@ -1,5 +1,6 @@
 export interface Theme {
   name: string
+  displayName: string
   colors: {
     background: string
     foreground: string
@@ -7,30 +8,49 @@ export interface Theme {
     secondary: string
     accent: string
     muted: string
+    card: string
+    cardForeground: string
+    border: string
+    input: string
+    ring: string
   }
 }
 
+// Standard YouTube Light Theme
 export const lightTheme: Theme = {
   name: 'light',
+  displayName: 'YouTube Light',
   colors: {
     background: '#ffffff',
-    foreground: '#000000',
-    primary: '#c4302b', // YouTube red
+    foreground: '#0f0f0f',
+    primary: '#ff0000', // YouTube red
     secondary: '#606060', // YouTube dark gray
     accent: '#065fd4', // YouTube blue
-    muted: '#f9f9f9' // YouTube light gray
+    muted: '#f8f8f8', // YouTube light gray
+    card: '#ffffff',
+    cardForeground: '#0f0f0f',
+    border: '#e5e5e5',
+    input: '#f2f2f2',
+    ring: '#ff0000'
   }
 }
 
+// Standard YouTube Dark Theme
 export const darkTheme: Theme = {
   name: 'dark',
+  displayName: 'YouTube Dark',
   colors: {
     background: '#0f0f0f', // YouTube dark background
     foreground: '#ffffff',
-    primary: '#c4302b', // YouTube red
-    secondary: '#272727', // YouTube darker gray
+    primary: '#ff0000', // YouTube red
+    secondary: '#aaaaaa', // YouTube gray text
     accent: '#3ea6ff', // YouTube light blue
-    muted: '#212121' // YouTube dark gray
+    muted: '#272727', // YouTube dark gray
+    card: '#212121',
+    cardForeground: '#ffffff',
+    border: '#303030',
+    input: '#121212',
+    ring: '#ff0000'
   }
 }
 
