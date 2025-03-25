@@ -1,6 +1,6 @@
 import React from 'react';
 import { SummaryViewModel } from '@/domain/summary/Summary';
-
+import { Card, CardContent } from "@/components/ui/card";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsTurnRight } from '@fortawesome/free-solid-svg-icons';
 import ReactMarkdown from 'react-markdown';
@@ -11,28 +11,26 @@ interface SummaryChaptersItemProps {
 }
 
 const SummaryItem: React.FC<SummaryChaptersItemProps> = ({ summary }) => {
-
-
   return (
-    <div className="card mb-4 summary-item">
-      <div className="card-body">
-        <div className="d-flex align-items-center">
-          <div className="mr-3">
-            <FontAwesomeIcon icon={faArrowsTurnRight} size="1x" className="text-metallic" />
+    <Card className="mb-4">
+      <CardContent className="pt-6">
+        <div className="flex items-center gap-3">
+          <div className="text-muted-foreground">
+            <FontAwesomeIcon icon={faArrowsTurnRight} size="1x" />
           </div>
           <div>
-            <h4 className="mb-0 text-metallic">
-              &nbsp; {summary.formattedDuration} - {summary.title}
+            <h4 className="text-lg font-semibold text-foreground">
+              {summary.formattedDuration} - {summary.title}
             </h4>
           </div>
         </div>
-        <p className="mt-3 mb-0 summary-text">
+        <div className="mt-3 prose dark:prose-invert max-w-none">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {summary.text}
           </ReactMarkdown>
-        </p>
-      </div>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

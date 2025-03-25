@@ -1,12 +1,33 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VideoSummarizer } from '@/components/VideoSummarizer';
-import { faSearch, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 import { VideoTitleList } from '@/components/VideoTitleList';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import VideoDataService from '@/application/VideoDataService';
-
-
-
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Home() {
 
@@ -101,125 +122,176 @@ export default function Home() {
 
 
   return (
-    <div className="container">
-      <section className="hero">
-        <div className="hero-text">
-          <h1 className="header-text">Supercharge Your YouTube Experience!</h1>
-          <p className="lead">Get concise summaries of your favorite videos in minutes</p>
-        </div>
-        <div className="input-group mb-3 search-box">
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Enter YouTube URL"
-            value={url}
-            id="txtUrl"
-            onChange={handleInputChange}
-          />
-          <div className="input-group-append">
-            <button className="btn btn-primary" onClick={handleButtonClick} disabled={!apiKey}>
-              <i>
-                <FontAwesomeIcon icon={faSearch} /> Go!
-              </i>
-            </button> &nbsp;
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={toggleModal}
-            >
-              <i>
-                <FontAwesomeIcon icon={faBoxOpen} />
-              </i>
-              Options
-            </button>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <section className="relative py-12 mb-12">
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg -z-10" />
+          
+          <div className="max-w-3xl mx-auto text-center space-y-6">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              Supercharge Your YouTube Experience!
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Get concise summaries of your favorite videos in minutes
+            </p>
 
-      </section>
-
-      <div className={`modal ${isModalOpen ? 'show' : ''}`} tabIndex={-1} style={{ display: isModalOpen ? 'block' : 'none' }}>
-        <div className="modal-dialog">
-          <div className="modal-content modal-custom">
-            <div className="modal-header">
-              <h5 className="modal-title">Options</h5>
-              <button type="button" className="btn-close btn-close-custom" title='Close' onClick={toggleModal}></button>
+            <div className="flex items-center gap-2 max-w-2xl mx-auto">
+              <Input
+                type="text"
+                placeholder="Enter YouTube URL"
+                value={url}
+                onChange={handleInputChange}
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleButtonClick} 
+                disabled={!apiKey}
+                className="whitespace-nowrap"
+              >
+                <FontAwesomeIcon icon={faSearch} className="mr-2" />
+                Go!
+              </Button>
+              <ThemeToggle />
+              <Button 
+                variant="outline" 
+                onClick={toggleModal}
+              >
+                <FontAwesomeIcon icon={faBoxOpen} className="mr-2" />
+                Options
+              </Button>
             </div>
-            <div className="modal-body">
-              <div className="options-container">
-                <div className="mb3">
-                  <input
-                    className="custom-checkbox form-check-input"
-                    type="checkbox"
-                    id="useChapters"
-                    checked={useChapters}
-                    onChange={handleCheckboxChange}
-                  /> &nbsp;
-                  <label className="form-check-label" htmlFor="useChapters">
-                    Use Chapters
-                  </label>
-                </div>
-                <div className="mb3">
-                  <label className="form-label" htmlFor="modelSelect">Use model to summarize:</label>
-                  <select
-                    className="form-control"
-                    id="modelSelect"
-                    value={selectedModel}
-                    onChange={handleSelectChange}
-                  >
-                    <option value="gpt-4o-mini">gpt-4o-mini</option>
-                    <option value="deepseek-chat">deepseek-chat</option>
-                    {/* <option value="text-davinci-003">davinci-003</option>
-                    <option value="text-babbage-001">babbage-001</option> */}
-                  </select>
-                </div>
+          </div>
+        </section>
+
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Options</DialogTitle>
+              <DialogDescription>
+                Configure your summarization preferences
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="useChapters"
+                  checked={useChapters}
+                  onCheckedChange={(checked) => setUseChapters(checked as boolean)}
+                />
+                <label 
+                  htmlFor="useChapters"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Use Chapters
+                </label>
               </div>
-              <div className="mb-3">
-                <label htmlFor="apiKey" className="form-label">OpenAI API Key</label>
-                <input
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Use model to summarize:
+                </label>
+                <Select
+                  value={selectedModel}
+                  onValueChange={setSelectedModel}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
+                    <SelectItem value="deepseek-chat">deepseek-chat</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  OpenAI API Key
+                </label>
+                <Input
                   type="text"
-                  className="form-control"
-                  id="apiKey"
                   placeholder="Enter your OpenAI API key"
                   value={apiKey}
                   onChange={handleApiKeyChange}
                 />
               </div>
-              <div className="mb-3">
-                <ul>
-                  <li>An API key is required to use this app.</li>
-                  <li>Don&apos;t have an OpenAPI key? <a href="https://platform.openai.com/" target="_blank" rel="noopener">Sign up</a> for access.</li>
-                  <li>Don&apos;t have an DeepSeek API key? <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener">Sign up</a> for access.</li>
-                  <li>In any moment you key is stored or saved on server, just in your browser for convenience.</li>
-                </ul>
-              </div>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <ul className="list-disc pl-4 space-y-2 text-sm text-muted-foreground">
+                    <li>An API key is required to use this app.</li>
+                    <li>Don&apos;t have an OpenAPI key? <a href="https://platform.openai.com/" target="_blank" rel="noopener" className="text-primary hover:underline">Sign up</a> for access.</li>
+                    <li>Don&apos;t have a DeepSeek API key? <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener" className="text-primary hover:underline">Sign up</a> for access.</li>
+                    <li>Your key is stored only in your browser for convenience.</li>
+                  </ul>
+                </CardContent>
+              </Card>
             </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={toggleModal}>Close</button>
-            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-1 min-w-0 space-y-4">
+            {!apiKey && (
+              <Alert>
+                <AlertDescription>
+                  To summarize a new video please enter your OpenAI API key in the{" "}
+                  <button onClick={toggleModal} className="text-primary hover:underline">
+                    options menu
+                  </button>
+                  .
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {validationError && (
+              <Alert variant="destructive">
+                <AlertDescription>{validationError}</AlertDescription>
+              </Alert>
+            )}
+
+            {!videoId && (
+              <Alert>
+                <AlertDescription>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li>On the right panel click on video to show summary</li>
+                    <li>On the right panel click on video title to show a mini-player</li>
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {videoId && (
+              <>
+                <h1 className="text-2xl font-bold">{videoTitle}</h1>
+                <VideoSummarizer
+                  videoId={videoId}
+                  onVideoTitleUpdate={handleVideoTitleUpdate}
+                  useChapters={useChapters}
+                  apiKey={apiKey}
+                  selectedModel={selectedModel}
+                  onVideoSummarized={() => setShouldFetchVideos(true)}
+                />
+              </>
+            )}
+          </div>
+
+          <div className="md:w-[300px] md:flex-none">
+            <VideoTitleList
+              setVideoId={setVideoId}
+              shouldFetchVideos={shouldFetchVideos}
+              setShouldFetchVideos={setShouldFetchVideos}
+            />
           </div>
         </div>
-      </div>
-      <div className="content-wrapper">
-        <div className="main-content">
-          {!apiKey && <div className="alert alert-warning mt-2">
-            <i>To summarize a new video please enter your OpenAI API key in the <a href='#' onClick={toggleModal}>options menu</a>.</i>
-          </div>}
-          {validationError && <div className="alert alert-danger mt-2">{validationError}</div>}
-          
-          {!videoId && <ul className='alert alert-info mt-2 list-unstyled'>
-            <li> On the right panel click on video to show summary </li>
-            <li> On the right panel click on video title to show a mini-player</li>
-          </ul>
-          } 
-          {videoId && <h1 className='youtube-title'>{videoTitle} </h1>}
-          {videoId && <VideoSummarizer videoId={videoId}
-            onVideoTitleUpdate={handleVideoTitleUpdate}
-            useChapters={useChapters}
-            apiKey={apiKey}
-            selectedModel={selectedModel}
-            onVideoSummarized={() => setShouldFetchVideos(true)} />}
-        </div>
-        <VideoTitleList setVideoId={setVideoId} shouldFetchVideos={shouldFetchVideos} setShouldFetchVideos={setShouldFetchVideos} />
       </div>
     </div>
   );

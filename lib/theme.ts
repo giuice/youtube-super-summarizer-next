@@ -15,22 +15,22 @@ export const lightTheme: Theme = {
   colors: {
     background: '#ffffff',
     foreground: '#000000',
-    primary: '#2563eb',
-    secondary: '#7c3aed',
-    accent: '#d946ef',
-    muted: '#f1f5f9'
+    primary: '#c4302b', // YouTube red
+    secondary: '#606060', // YouTube dark gray
+    accent: '#065fd4', // YouTube blue
+    muted: '#f9f9f9' // YouTube light gray
   }
 }
 
 export const darkTheme: Theme = {
   name: 'dark',
   colors: {
-    background: '#0f172a',
+    background: '#0f0f0f', // YouTube dark background
     foreground: '#ffffff',
-    primary: '#3b82f6',
-    secondary: '#8b5cf6',
-    accent: '#e879f9',
-    muted: '#1e293b'
+    primary: '#c4302b', // YouTube red
+    secondary: '#272727', // YouTube darker gray
+    accent: '#3ea6ff', // YouTube light blue
+    muted: '#212121' // YouTube dark gray
   }
 }
 

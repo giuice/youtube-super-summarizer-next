@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { VideoData } from '@/domain/video/VideoData';
 import { VideoModal } from '@/components/VideoModal';
 import { Pagination } from '@/components/Pagination';
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface VideoTitleProps {
   setVideoId: (videoId: string) => void;
@@ -69,39 +71,69 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
   }, [shouldFetchVideos, setShouldFetchVideos]);
 
   return (
-    <div className="latest-videos">
-      <h5 className="latest-videos-title mb-3">Latest Summarized Videos</h5>
-      <div className="latest-videos-search">
-        <input type="text" placeholder="Search by video title" 
-        value={searchText} onChange={(e) => setSearchText(e.target.value)} 
-        className="form-control mb-3 mx-3" />
+    <div className="sticky top-4">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold">Latest Summarized Videos</h2>
+          <Input
+            type="text"
+            placeholder="Search by video title"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-full"
+          />
+        </div>
+
+        <div className="space-y-4">
+          {currentVideos.map((video) => (
+            <Card 
+              key={video.video_id} 
+              className="overflow-hidden hover:ring-2 hover:ring-primary/50 transition-all cursor-pointer"
+              onClick={() => setVideoId(video.video_id)}
+            >
+              <CardContent className="p-0">
+                <div className="aspect-video">
+                  <img 
+                    className="w-full h-full object-cover" 
+                    src={video.thumbnail_url} 
+                    alt={`${video.title} thumbnail`} 
+                  />
+                </div>
+                <div className="p-3 space-y-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTitleClick(video.video_id);
+                    }}
+                    className="text-sm font-medium text-left hover:text-primary line-clamp-2 w-full"
+                  >
+                    {video.title}
+                  </button>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <a 
+                      href={video.author_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="hover:text-primary"
+                    >
+                      {video.author_name}
+                    </a>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <Pagination 
+          videosPerPage={videosPerPage} 
+          totalVideos={getVideosByTitle(searchText).length} 
+          paginate={paginate} 
+        />
+        
+        <VideoModal show={showModal} onHide={handleModalClose} videoId={currentVideoId} />
       </div>
-      <ul className="latest-videos-list">
-        {currentVideos.map((video) => (
-          <li key={video.video_id} className="latest-videos-item"
-            onClick={() => setVideoId(video.video_id)}
-            title='Click to show this Summary!'>
-            <div className="thumbnail-container">
-              <img className="thumbnail" src={video.thumbnail_url} alt={`${video.title} thumbnail`} />
-            </div>
-            <div className="video-title-author">
-              <a href="#" onClick={() => handleTitleClick(video.video_id)}>
-                {video.title}
-              </a>
-              <span> · </span>
-              <small>
-                <a href={video.author_url} target="_blank" rel="noopener noreferrer">
-                  {video.author_name}
-                </a>
-              </small>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <Pagination videosPerPage={videosPerPage} totalVideos={getVideosByTitle(searchText).length} paginate={paginate} />
-      <VideoModal show={showModal} onHide={handleModalClose} videoId={currentVideoId} />
     </div>
   );
-
-
 };

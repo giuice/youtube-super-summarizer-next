@@ -13,7 +13,7 @@ The application has already incorporated Shadcn UI components, but needs a prope
 
 ## Steps
 1. **Create Theme Configuration Files**
-   - Create `lib/theme-config.ts` to define theme colors and variables
+   - Create `lib/theme.ts` to define theme colors and variables
    - Define YouTube-inspired color palette with primary, secondary, and accent colors
    - Include both dark and light mode color schemes
 

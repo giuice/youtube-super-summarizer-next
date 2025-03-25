@@ -8,19 +8,14 @@ interface SummaryListProps {
 }
 
 const SummaryList: React.FC<SummaryListProps> = ({ summaryData }) => {
-  
-
   return (
-    <div>
-      {summaryData.map((item, index) => {
-       
-        return (
-          <SummaryChaptersItem
-            key={index}
-            summary={item}
-          />
-        );
-      })}
+    <div className="space-y-4">
+      {summaryData.map((item, index) => (
+        <SummaryChaptersItem
+          key={index}
+          summary={item}
+        />
+      ))}
     </div>
   );
 };

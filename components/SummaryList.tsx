@@ -15,11 +15,11 @@ const SummaryList: React.FC<SummaryListProps> = ({ summaryData }) => {
     const seconds = Math.floor(duration % 60);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
-  console.log('summaryData type:', typeof summaryData, Array.isArray(summaryData));
+
   const totalDuration = summaryData.reduce((total, segment) => total + segment.duration, 0);
   
   return (
-    <div>
+    <div className="space-y-4">
       {summaryData.map((item, index) => {
         accumulatedDuration += item.duration;
         const progressBarWidth = (accumulatedDuration / totalDuration) * 100;
@@ -29,7 +29,7 @@ const SummaryList: React.FC<SummaryListProps> = ({ summaryData }) => {
             key={index}
             summary={item}
             progressBarWidth={progressBarWidth}
-			accumulatedDuration={formatDuration(accumulatedDuration)}
+            accumulatedDuration={formatDuration(accumulatedDuration)}
           />
         );
       })}

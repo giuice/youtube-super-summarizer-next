@@ -1,10 +1,11 @@
 import React from 'react';
 import { SummaryViewModel } from '@/domain/summary/Summary';
-
+import { Card, CardContent } from "@/components/ui/card";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { cn } from "@/lib/utils";
 
 interface SummaryItemProps {
   summary: SummaryViewModel;
@@ -12,37 +13,41 @@ interface SummaryItemProps {
   progressBarWidth: number;
 }
 
-const SummaryItem: React.FC<SummaryItemProps> = ({ summary,accumulatedDuration,  progressBarWidth }) => {
+const SummaryItem: React.FC<SummaryItemProps> = ({ summary, accumulatedDuration, progressBarWidth }) => {
   return (
-    <div className="card mb-4 summary-item">
-      <div className="card-body">
-        <div className="d-flex align-items-center">
-          <div className="mr-3">
-            <FontAwesomeIcon icon={faClock} size="2x" className="text-metallic" />
+    <Card className="mb-4">
+      <CardContent className="pt-6">
+        <div className="flex items-center gap-3">
+          <div className="text-muted-foreground">
+            <FontAwesomeIcon icon={faClock} size="2x" />
           </div>
-          <div>
-            <h4 className="mb-0 text-metallic">
-              &nbsp; Minute {summary.minuteStarting} - {accumulatedDuration}
+          <div className="flex-1">
+            <h4 className="text-lg font-semibold mb-2 text-foreground">
+              Minute {summary.minuteStarting} - {accumulatedDuration}
             </h4>
-            <div className="progress" style={{ height: "8px" }}>
+            <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
               <div
-                className="progress-bar"
+                className={cn(
+                  "h-full bg-primary transition-all",
+                  progressBarWidth > 90 ? "rounded-l-full" : "rounded-full"
+                )}
                 role="progressbar"
-                title="Progress"
                 style={{ width: `${progressBarWidth}%` }}
                 aria-valuenow={progressBarWidth}
                 aria-valuemin={0}
                 aria-valuemax={100}
-              ></div>
+              />
             </div>
           </div>
         </div>
-         {/* Use ReactMarkdown to render markdown as HTML */}
-         <ReactMarkdown remarkPlugins={[remarkGfm]} className="mt-3 mb-0 summary-text">
-           {summary.text} 
+        <ReactMarkdown 
+          remarkPlugins={[remarkGfm]} 
+          className="mt-4 prose dark:prose-invert max-w-none"
+        >
+          {summary.text}
         </ReactMarkdown>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -2,14 +2,21 @@
 
 ## [Unreleased]
 
+### CRCT System Updates
+- Transitioned from Strategy to Execution phase
+- Completed ChatPopup migration to Shadcn UI
+- Updated all relevant documentation
+
 ### Added
 - Support for Next.js 15.2.3
 - Support for Tailwind CSS 4.0.15
 - Support for React 19.0.0
-- Theme system implementation with next-themes
+- Theme system implementation with next-themes (YouTube-inspired colors)
 - ThemeProvider component for centralized theme management
-- ThemeToggle component with light/dark mode switching
+- ThemeToggle component with Sun/Moon icons for light/dark mode switching
 - Theme configuration with custom light/dark theme variables
+- Set dark mode as default
+- Updated all components to use theme variables
 
 ### Changed
 - Updated development server to use turbopack with flag `--turbopack`
