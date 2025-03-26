@@ -3,7 +3,7 @@ import { VideoData } from '@/domain/video/VideoData';
 import { VideoModal } from '@/components/VideoModal';
 import { Pagination } from '@/components/Pagination';
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface VideoTitleProps {
   setVideoId: (videoId: string) => void;
@@ -71,7 +71,9 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
   }, [shouldFetchVideos, setShouldFetchVideos]);
 
   return (
+    
     <div className="sticky top-4">
+      
       <div className="space-y-4">
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold">Latest Summarized Videos</h2>
@@ -86,6 +88,48 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
 
         <div className="space-y-4">
           {currentVideos.map((video) => (
+          //   <Card key={video.video_id} 
+          //   className="glass-card animate-scale-in h-full"
+          //   onClick={() => setVideoId(video.video_id)}>
+          //   <CardHeader className="pb-3">
+          //     <CardTitle className="text-lg font-medium flex items-center">
+          //       <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
+          //       <a 
+          //             href={video.author_url} 
+          //             target="_blank" 
+          //             rel="noopener noreferrer"
+          //             onClick={(e) => e.stopPropagation()}
+          //             className="hover:text-primary"
+          //           >
+          //             {video.author_name}
+          //           </a>
+          //     </CardTitle>
+          //   </CardHeader>
+          //   <CardContent className="max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+          //   <div className="aspect-video">
+          //         <img 
+          //           className="w-full h-full object-cover" 
+          //           src={video.thumbnail_url} 
+          //           alt={`${video.title} thumbnail`} 
+          //         />
+          //       </div>
+                
+          //         <button
+          //           onClick={(e) => {
+          //             e.stopPropagation();
+          //             handleTitleClick(video.video_id);
+          //           }}
+          //           className="text-sm font-medium text-left hover:text-primary line-clamp-2 w-full"
+          //         >
+          //           {video.title}
+          //         </button>
+          //         <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    
+          //         </div>
+               
+          //   </CardContent>
+          // </Card>
+          
             <Card 
               key={video.video_id} 
               className="overflow-hidden hover:ring-2 hover:ring-primary/50 transition-all cursor-pointer"
@@ -123,6 +167,7 @@ export const VideoTitleList: React.FC<VideoTitleProps> = ({ setVideoId, shouldFe
                 </div>
               </CardContent>
             </Card>
+            
           ))}
         </div>
 

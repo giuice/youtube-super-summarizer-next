@@ -28,7 +28,7 @@ const SummaryItem: React.FC<SummaryItemProps> = ({ summary, accumulatedDuration,
             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
               <div
                 className={cn(
-                  "h-full bg-primary transition-all",
+                  "h-full bg-error transition-all",
                   progressBarWidth > 90 ? "rounded-l-full" : "rounded-full"
                 )}
                 role="progressbar"
@@ -40,12 +40,13 @@ const SummaryItem: React.FC<SummaryItemProps> = ({ summary, accumulatedDuration,
             </div>
           </div>
         </div>
+        <div className="mt-3 prose dark:prose-invert max-w-none">
         <ReactMarkdown 
           remarkPlugins={[remarkGfm]} 
-          className="mt-4 prose dark:prose-invert max-w-none"
         >
           {summary.text}
         </ReactMarkdown>
+        </div>
       </CardContent>
     </Card>
   );

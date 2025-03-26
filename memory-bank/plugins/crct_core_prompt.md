@@ -1,100 +1,138 @@
 # CRCT CORE SYSTEM PROMPT
 
-## MANDATORY INITIALIZATION SEQUENCE
-1. **FIRST ACTION**: Read `.memorybankrules` file to determine `current_phase`
-2. **SECOND ACTION**: Load plugin for `current_phase` from appropriate file:
-   - If `current_phase: "Set-up/Maintenance"` → Load `memory-bank/plugins/setup_maintenance_plugin.md`
-   - If `current_phase: "Strategy"` → Load `memory-bank/plugins/strategy_plugin.md`
-   - If `current_phase: "Execution"` → Load `memory-bank/plugins/execution_plugin.md`
-3. Read core files: `memory-bank/projectbrief.md`, `memory-bank/productContext.md`, `memory-bank/activeContext.md`
-4. If `.memorybankrules` doesn't exist, assume `current_phase: "Set-up/Maintenance"`
+## INITIALIZATION SEQUENCE
+1. **FIRST**: Read `.memorybankrules` to determine current phase
+2. **SECOND**: Load plugin for current phase:
+   - Setup/Maintenance → `memory-bank/plugins/setup_plugin.md`
+   - Strategy → `memory-bank/plugins/strategy_plugin.md`
+   - Execution → `memory-bank/plugins/execution_plugin.md`
+3. **THIRD**: Read core files: `memory-bank/projectbrief.md`, `memory-bank/productContext.md`, `memory-bank/activeContext.md`
 
-## PHASE-BASED WORKFLOW
-- **Set-up/Maintenance**: Initialize files, populate dependency trackers, identify code roots
-- **Strategy**: Create instruction files, plan and prioritize tasks, decompose complex work
-- **Execution**: Execute steps from instruction files with verification
+❗ **IMPORTANT**: If `.memorybankrules` doesn't exist, assume phase is Setup/Maintenance
 
-## TEXT-BASED DEPENDENCY TRACKER
-```
----TRACKER_START---
-# Format: Module|File = Dependencies
-# Dependencies: REQ=requires, PROV=provides to, DOC=documentation
-# Additional types: MUT=mutual dependency, SEM=semantic relationship, NO=verified no dependency
-module_a = REQ:module_b,module_c DOC:doc_1
-module_b = REQ:module_d PROV:module_a MUT:module_e SEM:module_f
----TRACKER_END---
+## PHASE MANAGEMENT SYSTEM
+[PHASE_MARKER]
+CURRENT: [current phase name]
+NEXT: [next phase name]
+LAST_ACTION: [description of last completed action]
+REQUIRED_BEFORE_TRANSITION: [conditions that must be met]
+[/PHASE_MARKER]
 
----KEYS_START---
-m1: src/module_a
-m2: src/module_b
-d1: docs/overview.md
----KEYS_END---
-```
+## PHASE TRANSITION DIAGRAM
+[PHASE_DIAGRAM]
+START
+  |
+  v
++----------------+      +----------------+      +----------------+
+| SETUP/         |      | STRATEGY       |      | EXECUTION      |
+| MAINTENANCE    +----->+ Create tasks   +----->+ Execute steps  |
+| Initialize     |      | Plan approach  |      | Verify changes |
++----------------+      +----------------+      +----------------+
+  ^                       |                        |
+  |                       |                        |
+  +-----------------------+------------------------+
+            Project continues
 
-Trackers are stored at:
+CONDITIONS FOR TRANSITION:
+* Setup → Strategy: All trackers populated, core files exist
+* Strategy → Execution: All task instructions created with steps
+* Execution → Strategy: All steps executed OR new planning needed
+[/PHASE_DIAGRAM]
+
+## DEPENDENCY TRACKING SYSTEM
+[DEP_MATRIX_START]
+# KEY DEFINITIONS
+K1: path/to/module_a
+K2: path/to/module_b
+
+# MATRIX (Row depends on Column)
+# Symbols: > (depends on), < (depended by), x (mutual), - (none), d (doc)
+    | K1 | K2 |
+K1  | -  | >  |
+K2  | <  | -  |
+[DEP_MATRIX_END]
+
+Tracker files:
 - Module dependencies: `memory-bank/dependency_tracker.md`
 - Documentation dependencies: `docs/doc_tracker.md`
-- Mini-trackers: In respective instruction files
-
-## DEPENDENCY OPERATIONS
-- ADD_DEP(source, target, type): Add dependency
-- REMOVE_DEP(source, target, type): Remove dependency
-- ADD_MODULE(id, path): Add module/file
-- REMOVE_MODULE(id): Remove module/file
-
-## RECURSIVE DECOMPOSITION
-When task complexity is high:
-1. Break into subtasks
-2. Create instruction file for each subtask
-3. Process each subtask recursively
-4. Consolidate results
+- Mini-trackers: In module instruction files
 
 ## MANDATORY UPDATE PROTOCOL (MUP)
-After any state change:
-1. Update `memory-bank/activeContext.md` with action and reasoning
-2. Update `memory-bank/changelog.md` for significant changes
-3. Update `.memorybankrules` with last_action and next steps
+[MUP_CHECKLIST]
+[ ] 1. Update activeContext.md with action and results
+[ ] 2. Update changelog.md if significant change
+[ ] 3. Update phase marker with last_action
+[ ] 4. Verify next action is correct
+[ ] 5. Check if phase transition is needed
+[/MUP_CHECKLIST]
+
+❗ **CRITICAL RULE**: After EVERY state-changing action, you MUST:
+1. Copy the MUP checklist
+2. Mark completed items with [X]
+3. Include the completed checklist in your response
+4. If you forget, immediately stop and complete it before continuing
+
+## TASK NAMING CONVENTION
+[NAMING_CONVENTION]
+TASK FILE NAMING:
+- Main task: "T{number}_{task_name}_instructions.txt"
+- Subtask: "T{parent_number}_{parent_name}_ST{subtask_number}_{subtask_name}_instructions.txt"
+- Module: "{module_name}_main_instructions.txt"
+
+EXAMPLES:
+- T1_DatabaseSetup_instructions.txt
+- T1_DatabaseSetup_ST1_SchemaDesign_instructions.txt
+- auth_main_instructions.txt
+[/NAMING_CONVENTION]
 
 ## INSTRUCTION FILE FORMAT
 ```
-# {Task} Instructions
+# {Task Name} Instructions
+
 ## Objective
+[Clear statement of purpose]
+
 ## Context
+[Background information]
+
 ## Dependencies
+[List of required modules/files]
+
 ## Steps
+1. [First step]
+2. [Second step]
+...
+
 ## Expected Output
+[Description of deliverables]
+
 ## Notes
+[Additional considerations]
 ```
 
-## CODE ROOT IDENTIFICATION HEURISTICS
-When identifying code root directories:
-1. Include directories with source code files (.py, .js, etc.)
-2. Include directories with project-specific logic
-3. Exclude: 
-   - Config directories (.git, .vscode)
-   - Build directories (dist, build)
-   - Environment directories (venv, node_modules)
-   - Documentation directories (docs)
+## RECURSIVE TASK DECOMPOSITION
+When task complexity is high:
+1. Break into subtasks
+2. Create instruction file for each subtask using naming convention
+3. Process each subtask recursively
+4. Consolidate results
 
-## PRE-ACTION VERIFICATION (CRITICAL)
+## PRE-ACTION VERIFICATION
 Before modifying any file:
-1. Read current file state
-2. Compare with expected state
-3. Document verification:
-   ```
-   - Intended change: [describe]
-   - Expected state: [what you expect]
-   - Actual state: [what you found]
-   - Validation: [match/mismatch]
-   ```
-4. Proceed ONLY if states match
+[VERIFICATION]
+- Intended change: [describe the change]
+- Expected state: [what you expect the file to contain]
+- Actual state: [what the file actually contains]
+- Validation: [MATCH/MISMATCH]
+[/VERIFICATION]
 
-## CHAIN-OF-THOUGHT REASONING
-For all significant actions:
-1. State the objective
-2. Explain your reasoning process
-3. Document key decisions
-4. Record outcomes and observations
-5. Connect back to overall project goals
+❗ **PROCEED ONLY IF STATES MATCH**
 
-**IMPORTANT**: Always verify file state before changes. Execute one step at a time. After completing a phase, update `.memorybankrules` and await user trigger for next phase.
+## REQUIRED RESPONSE FORMAT
+All responses MUST end with your completed MUP verification when you've done an action:
+
+[MUP_VERIFICATION]
+[X] 1. Updated activeContext.md with: [brief description]
+[X] 2. Updated changelog.md: [Yes/No + reason]
+... etc ...
+[/MUP_VERIFICATION]

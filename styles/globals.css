@@ -1,7 +1,12 @@
 @import 'tailwindcss';
+@plugin "@tailwindcss/typography";
 @plugin 'tailwindcss-animate';
+@plugin "daisyui" {
+  themes: all;
+}
 
-@custom-variant dark (&:is(.dark *));
+
+/* @custom-variant dark (&:is(.dark *)); */
 
 @keyframes accordion-down {
   from {
@@ -33,7 +38,7 @@
 }
 
 /* Base styles */
-@layer base {
+/* @layer base {
   * {
     border-color: var(--border);
     outline-color: var(--ring);
@@ -44,7 +49,7 @@
     font-family: 'Roboto', sans-serif;
     font-size: 18px;
   }
-}
+} */
 
 /* YouTube-specific utility classes */
 @layer utilities {
@@ -180,3 +185,4 @@
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
+

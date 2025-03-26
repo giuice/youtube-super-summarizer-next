@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VideoSummarizer } from '@/components/VideoSummarizer';
 import { faSearch, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 import { VideoTitleList } from '@/components/VideoTitleList';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import VideoDataService from '@/application/VideoDataService';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Search, Settings } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Hero } from "@/components/ui/hero";
+import { VideoListCard } from '@/components/VideoListCard';
 
 export default function Home() {
 
@@ -93,20 +95,20 @@ export default function Home() {
   }, []);
 
   const handleButtonClick = useCallback(async () => {
-  const hasapi = await checkApiKey();
-  console.log(hasapi);
-  if (validateInput(url) && hasapi && apiKey) {
-    const videoId = extractVideoId(url);
-    setVideoId('');
+    const hasapi = await checkApiKey();
+    console.log(hasapi);
+    if (validateInput(url) && hasapi && apiKey) {
+      const videoId = extractVideoId(url);
+      setVideoId('');
 
-    // Set a timeout to give time to clear the videoId
-    setTimeout(() => {
-      setVideoId(videoId);
-    }, 0);
-  }else if(!hasapi){ 
-    setValidationError('Please enter a valid OpenAI API key, or choose one already summarized video from the list of titles.');
-  }
-}, [url, checkApiKey, apiKey]);
+      // Set a timeout to give time to clear the videoId
+      setTimeout(() => {
+        setVideoId(videoId);
+      }, 0);
+    } else if (!hasapi) {
+      setValidationError(`Please enter a valid ${selectedModel} key, or choose one already summarized video from the list of titles.`);
+    }
+  }, [url, checkApiKey, apiKey]);
 
   // Add this function to validate the input
   const validateInput = (input: string): boolean => {
@@ -124,8 +126,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <section className="relative py-12 mb-12">
-          {/* Background gradient */}
+        {/* <section className="relative py-12 mb-12">
+
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg -z-10" />
           
           <div className="max-w-3xl mx-auto text-center space-y-6">
@@ -145,6 +147,7 @@ export default function Home() {
                 className="flex-1"
               />
               <Button 
+                variant="daisyError"
                 onClick={handleButtonClick} 
                 disabled={!apiKey}
                 className="whitespace-nowrap"
@@ -152,7 +155,6 @@ export default function Home() {
                 <FontAwesomeIcon icon={faSearch} className="mr-2" />
                 Go!
               </Button>
-              <ThemeToggle />
               <Button 
                 variant="outline" 
                 onClick={toggleModal}
@@ -160,29 +162,33 @@ export default function Home() {
                 <FontAwesomeIcon icon={faBoxOpen} className="mr-2" />
                 Options
               </Button>
+              <ThemeToggle />
             </div>
           </div>
-        </section>
+        </section> */}
+        <Hero onButtonClick={handleButtonClick} onInputChange={handleInputChange}
+          toggleModal={toggleModal} url={url} isApiKeyValid />
 
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent>
+          <DialogContent className="glass-card sm:max-w-md animate-scale-in">
             <DialogHeader>
-              <DialogTitle>Options</DialogTitle>
+              <DialogTitle>Settings</DialogTitle>
               <DialogDescription>
                 Configure your summarization preferences
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-4 py-4">
-              <div className="flex items-center space-x-2">
+            <div className="space-y-5 py-4">
+              <div className="flex items-center space-x-3">
                 <Checkbox
                   id="useChapters"
                   checked={useChapters}
                   onCheckedChange={(checked) => setUseChapters(checked as boolean)}
+                  className="data-[state=checked]:bg-primary"
                 />
-                <label 
+                <label
                   htmlFor="useChapters"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-sm font-medium leading-none"
                 >
                   Use Chapters
                 </label>
@@ -199,7 +205,7 @@ export default function Home() {
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="glass-card">
                     <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
                     <SelectItem value="deepseek-chat">deepseek-chat</SelectItem>
                   </SelectContent>
@@ -215,10 +221,11 @@ export default function Home() {
                   placeholder="Enter your OpenAI API key"
                   value={apiKey}
                   onChange={handleApiKeyChange}
+                  className="glass-input"
                 />
               </div>
 
-              <Card>
+              <Card className="glass-card border-border/40">
                 <CardContent className="pt-6">
                   <ul className="list-disc pl-4 space-y-2 text-sm text-muted-foreground">
                     <li>An API key is required to use this app.</li>
@@ -231,65 +238,84 @@ export default function Home() {
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}
+                className="glass-card hover:bg-secondary/50">
                 Close
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-1 min-w-0 space-y-4">
-            {!apiKey && (
-              <Alert>
-                <AlertDescription>
-                  To summarize a new video please enter your OpenAI API key in the{" "}
-                  <button onClick={toggleModal} className="text-primary hover:underline">
-                    options menu
-                  </button>
-                  .
-                </AlertDescription>
-              </Alert>
-            )}
+        <div className="container max-w-6xl mx-auto mt-8">
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex-1 min-w-0 space-y-4 animate-fade-in animation-delay-300">
+              {!apiKey && (
+                <Alert className="glass-card border-border/30">
+                  <AlertDescription>
+                    To summarize a new video please enter your OpenAI API key in the{" "}
+                    <button onClick={toggleModal} className="text-primary hover:underline">
+                      settings menu
+                    </button>.
+                  </AlertDescription>
+                </Alert>
+              )}
 
-            {validationError && (
-              <Alert variant="destructive">
-                <AlertDescription>{validationError}</AlertDescription>
-              </Alert>
-            )}
+              {validationError && (
+                <Alert variant="destructive" className="animate-fade-in">
+                  <AlertDescription>{validationError}</AlertDescription>
+                </Alert>
+              )}
 
-            {!videoId && (
-              <Alert>
-                <AlertDescription>
-                  <ul className="list-disc pl-4 space-y-1">
-                    <li>On the right panel click on video to show summary</li>
-                    <li>On the right panel click on video title to show a mini-player</li>
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            )}
+              {!videoId && !validationError && (
+                <div className="space-y-4">
+                  <Alert className="glass-card border-border/30">
+                    <AlertDescription>
+                      <ul className="list-disc pl-4 space-y-1">
+                        <li>Paste a YouTube URL above or select a video from the list</li>
+                        <li>Click on a video title to see its summary</li>
+                      </ul>
+                    </AlertDescription>
+                  </Alert>
 
-            {videoId && (
-              <>
-                <h1 className="text-2xl font-bold">{videoTitle}</h1>
-                <VideoSummarizer
-                  videoId={videoId}
-                  onVideoTitleUpdate={handleVideoTitleUpdate}
-                  useChapters={useChapters}
-                  apiKey={apiKey}
-                  selectedModel={selectedModel}
-                  onVideoSummarized={() => setShouldFetchVideos(true)}
+                  <div className="flex items-center justify-center h-[300px] glass-card rounded-lg border-dashed border-2 border-border/50">
+                    <div className="text-center p-6">
+                      <Search size={40} className="mx-auto text-muted-foreground mb-4 opacity-50" />
+                      <h3 className="text-lg font-medium">No video selected</h3>
+                      <p className="text-muted-foreground mt-2">Enter a YouTube URL and click Summarize</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {videoId && (
+                <Card className="glass-card overflow-hidden animate-scale-in">
+                  <CardContent className="p-0">
+                    <div className="p-6">
+                      <h1 className="text-2xl font-bold">{videoTitle}</h1>
+                      <div className="h-[2px] w-16 bg-primary/60 mt-2 mb-4"></div>
+                      <VideoSummarizer
+                        videoId={videoId}
+                        onVideoTitleUpdate={handleVideoTitleUpdate}
+                        useChapters={useChapters}
+                        apiKey={apiKey}
+                        selectedModel={selectedModel}
+                        onVideoSummarized={() => setShouldFetchVideos(true)}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            <div className="lg:w-[320px] lg:flex-none animate-fade-in animation-delay-600">
+              <VideoListCard title="Recently Summarized">
+                <VideoTitleList
+                  setVideoId={setVideoId}
+                  shouldFetchVideos={shouldFetchVideos}
+                  setShouldFetchVideos={setShouldFetchVideos}
                 />
-              </>
-            )}
-          </div>
-
-          <div className="md:w-[300px] md:flex-none">
-            <VideoTitleList
-              setVideoId={setVideoId}
-              shouldFetchVideos={shouldFetchVideos}
-              setShouldFetchVideos={setShouldFetchVideos}
-            />
+              </VideoListCard>
+            </div>
           </div>
         </div>
       </div>

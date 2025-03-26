@@ -94,7 +94,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
 
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col">
+      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col bg-background border">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">Chat with Video Content</DialogTitle>
           <DialogDescription>
@@ -175,7 +175,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
           <Button 
             type="submit" 
             disabled={isLoading || !inputMessage.trim()}
-            variant="default"
+            variant="daisyPrimary"
           >
             {isLoading ? (
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-foreground" />

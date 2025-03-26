@@ -1,116 +1,38 @@
----TRACKER_START---
-# Module Dependencies for YouTube Super Summarizer Next.js
-# Format: Module|File = Dependencies
-# Dependencies: REQ=requires, PROV=provides to, DOC=documentation
-# Additional types: MUT=mutual dependency, SEM=semantic relationship, NO=verified no dependency
-
-# Core Framework
-nextjs_framework = PROV:components_video,components_summary,components_pagination,api_youtube_metadata,api_transcript,api_chapter,api_summary_transcripts
-tailwindcss_framework = PROV:theme_provider,shadcn_ui
-
-# Domain Layer
-domain_model = PROV:domain_summary,domain_transcript,domain_video,domain_video_segment
-domain_summary = REQ:domain_model PROV:infra_summary_repo_supabase,infra_summary_repo_neon,infra_supabase
-domain_transcript = REQ:domain_model PROV:infra_transcript_repo_supabase,infra_transcript_repo_neon,domain_video_segment
-domain_video = REQ:domain_model PROV:infra_video_repo_supabase,infra_video_repo_neon,application_video_service
-domain_video_segment = REQ:domain_model,domain_transcript PROV:infra_video_segment_repo_supabase,infra_video_segment_repo_neon
-
-# Application Layer
-application_video_service = REQ:domain_video,domain_video_segment,domain_transcript,domain_summary,utils_repository_factory PROV:components_video
-
-# Infrastructure Layer
-infra_mongodb = PROV:infra_summary_repo_mongo
-infra_summary_repo_mongo = REQ:infra_mongodb,domain_summary
-infra_supabase = PROV:infra_summary_repo_supabase,infra_transcript_repo_supabase,infra_video_repo_supabase,infra_video_segment_repo_supabase,infra_migration_utility
-infra_summary_repo_supabase = REQ:infra_supabase,domain_summary PROV:utils_repository_factory
-infra_transcript_repo_supabase = REQ:infra_supabase,domain_transcript PROV:utils_repository_factory
-infra_video_repo_supabase = REQ:infra_supabase,domain_video PROV:utils_repository_factory
-infra_video_segment_repo_supabase = REQ:infra_supabase,domain_video_segment PROV:utils_repository_factory
-
-# Neon PostgreSQL Implementation
-infra_neon = PROV:infra_summary_repo_neon,infra_transcript_repo_neon,infra_video_repo_neon,infra_video_segment_repo_neon,infra_schema_setup,infra_migration_utility
-infra_summary_repo_neon = REQ:infra_neon,domain_summary PROV:utils_repository_factory
-infra_transcript_repo_neon = REQ:infra_neon,domain_transcript PROV:utils_repository_factory
-infra_video_repo_neon = REQ:infra_neon,domain_video PROV:utils_repository_factory
-infra_video_segment_repo_neon = REQ:infra_neon,domain_video_segment PROV:utils_repository_factory
-infra_schema_setup = REQ:infra_neon
-infra_migration_utility = REQ:infra_neon,infra_supabase
-
-# Utilities
-utils_repository_factory = REQ:infra_summary_repo_supabase,infra_transcript_repo_supabase,infra_video_repo_supabase,infra_video_segment_repo_supabase,infra_summary_repo_neon,infra_transcript_repo_neon,infra_video_repo_neon,infra_video_segment_repo_neon PROV:application_video_service
-
-# UI Components
-components_video = REQ:application_video_service,shadcn_ui
-components_summary = REQ:domain_summary,domain_video_segment
-components_pagination = NO:domain_model
-components_chat = REQ:theme_provider,shadcn_ui
-
-# UI Framework and Theming
-shadcn_ui = REQ:tailwindcss_framework PROV:components_video,components_summary,components_pagination,theme_provider,components_chat
-theme_provider = REQ:shadcn_ui,tailwindcss_framework,next_themes PROV:components_video,components_summary,components_pagination,components_chat
-next_themes = PROV:theme_provider
-theme_toggle = REQ:shadcn_ui,next_themes,lucide_react PROV:components_chat
-lucide_react = PROV:theme_toggle
-
-# API Endpoints
-api_youtube_metadata = REQ:domain_video,application_video_service,nextjs_framework
-api_transcript = REQ:domain_transcript,nextjs_framework
-api_chapter = REQ:domain_video_segment,nextjs_framework
-api_summary_transcripts = REQ:domain_summary,domain_transcript,nextjs_framework
----TRACKER_END---
-
----KEYS_START---
-# Core Framework
+[DEP_MATRIX_START]
+# KEY DEFINITIONS
 nextjs_framework: next@15.2.3
 tailwindcss_framework: tailwindcss@4.0.15
-
-# Domain Layer
 domain_model: domain/model
 domain_summary: domain/summary
 domain_transcript: domain/transcript
 domain_video: domain/video
 domain_video_segment: domain/video_segment
-
-# Application Layer
 application_video_service: application/VideoDataService.ts
-
-# Infrastructure Layer
-infra_mongodb: infra/mongodb
-infra_summary_repo_mongo: infra/mongodb/SummaryRepositoryMongo.ts
-infra_supabase: infra/supabase
-infra_summary_repo_supabase: infra/supabase/SummaryRepositorySupabase.ts
-infra_transcript_repo_supabase: infra/supabase/TranscriptRepositorySupabase.ts
-infra_video_repo_supabase: infra/supabase/VideoRepositorySupabase.ts
-infra_video_segment_repo_supabase: infra/supabase/VideoSegmentRepositorySupabase.ts
-
-# Neon PostgreSQL Implementation
-infra_neon: infra/neon/NeonPostgres.ts
-infra_summary_repo_neon: infra/neon/SummaryRepositoryNeon.ts
-infra_transcript_repo_neon: infra/neon/TranscriptRepositoryNeon.ts
-infra_video_repo_neon: infra/neon/VideoRepositoryNeon.ts
-infra_video_segment_repo_neon: infra/neon/VideoSegmentRepositoryNeon.ts
-infra_schema_setup: infra/neon/SchemaSetup.ts
-infra_migration_utility: infra/neon/MigrationUtility.ts
-
-# Utilities
-utils_repository_factory: utils/RepositoryFactory.ts
-
-# UI Components
-components_video: components/VideoSummarizer.tsx,components/VideoModal.tsx,components/VideoTitleList.tsx
-components_summary: components/SummaryList.tsx,components/SummaryItem.tsx,components/SummaryChaptersList.tsx,components/SummaryChaptersItem.tsx,components/DocumentSummarizer.tsx
+components_video: components/VideoSummarizer.tsx,VideoModal.tsx,VideoTitleList.tsx
+components_summary: components/SummaryList.tsx,SummaryItem.tsx
 components_pagination: components/Pagination.tsx
 components_chat: components/ChatPopup.tsx
-
-# UI Framework and Theming
-shadcn_ui: components/ui/dialog.tsx,components/ui/avatar.tsx,components/ui/button.tsx,components/ui/card.tsx,components/ui/input.tsx
 theme_provider: components/ThemeProvider.tsx
 theme_toggle: components/ThemeToggle.tsx
+shadcn_ui: components/ui/*
 next_themes: next-themes@latest
-lucide_react: lucide-react@latest
 
-# API Endpoints
-api_youtube_metadata: pages/api/youtube_metadata.ts
-api_transcript: pages/api/transcript.ts
-api_chapter: pages/api/chapter.ts,pages/api/get_chapters.ts
-api_summary_transcripts: pages/api/summary_transcripts/create.ts
----KEYS_END---
+# MATRIX (Row depends on Column)
+# Symbols: > (depends on), < (depended by), x (mutual), - (none), d (doc)
+    | nextjs | tailwind | domain_model | domain_summary | domain_transcript | domain_video | video_segment | app_service | components_video | components_summary | components_chat | theme_provider | theme_toggle | shadcn | next_themes
+nextjs | - | - | - | - | - | - | - | - | > | > | > | - | - | - | -
+tailwind | - | - | - | - | - | - | - | - | - | - | - | > | - | > | -
+domain_model | - | - | - | < | < | < | < | - | - | - | - | - | - | - | -
+domain_summary | - | - | > | - | - | - | - | > | - | > | - | - | - | - | -
+domain_transcript | - | - | > | - | - | - | > | > | - | - | > | - | - | - | -
+domain_video | - | - | > | - | - | - | - | > | > | - | - | - | - | - | -
+video_segment | - | - | > | - | > | - | - | > | - | > | - | - | - | - | -
+app_service | - | - | - | > | > | > | > | - | > | - | - | - | - | - | -
+components_video | > | - | - | - | - | > | - | > | - | - | - | > | - | > | -
+components_summary | > | - | - | > | - | - | > | - | - | - | - | > | - | > | -
+components_chat | > | - | - | - | > | - | - | - | - | - | - | > | - | > | -
+theme_provider | - | > | - | - | - | - | - | - | > | > | > | - | x | > | >
+theme_toggle | - | - | - | - | - | - | - | - | - | - | - | x | - | > | >
+shadcn | - | > | - | - | - | - | - | - | > | > | > | > | > | - | -
+next_themes | - | - | - | - | - | - | - | - | - | - | - | > | > | - | -
+[DEP_MATRIX_END]

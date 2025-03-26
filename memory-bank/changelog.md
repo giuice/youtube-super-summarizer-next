@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 ### CRCT System Updates
+- Migrated to matrix-based dependency tracking system:
+  - Introduced new dependency matrix format with clear relationship symbols (>, <, x, -, d)
+  - Enhanced visualization of component relationships
+  - Improved tracking of mutual dependencies
+  - Unified framework, component, and theme system dependencies
 - Transitioned from Strategy to Execution phase
 - Completed ChatPopup migration to Shadcn UI
 - Updated all relevant documentation
@@ -20,12 +25,13 @@
 
 ### Changed
 - Updated development server to use turbopack with flag `--turbopack`
-- Updated dependency tracker to include framework versions
+- Migrated dependency tracking to matrix-based system
 - Updated TypeScript to 5.8.2
 - Updated _app.tsx to include ThemeProvider wrapper
 
 ### Removed
 - Legacy postcss configuration
+- Old list-based dependency tracking format
 
 ## March 24, 2025
 - Removed react-bootstrap dependency

@@ -103,7 +103,7 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({
     };
 
     fetchTranscript();
-  }, [videoId]);
+  }, [videoId, useChapters]);
 
   const getModelFactory = (model: string): BaseLanguageModel => {
     switch (model) {
@@ -180,8 +180,8 @@ export const VideoSummarizer: React.FC<VideoSummarizerProps> = ({
       {!loading && !apiError && (
         <div className="space-y-6">
           <Button
+          variant="daisyPrimary"
             onClick={() => setShowChat(true)}
-            variant="default"
             className="w-full sm:w-auto"
           >
             Chat with Video Content

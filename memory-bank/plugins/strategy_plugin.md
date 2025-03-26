@@ -1,102 +1,159 @@
-# Strategy Plugin
+# STRATEGY PLUGIN
 
-## Entering/Exiting This Phase
-- **Enter if**: `.memorybankrules` shows `current_phase: "Strategy"` or transitioning from Setup/Maintenance
-- **Exit when**: Instruction files are created with complete steps and dependencies, tasks are prioritized
-- **Exit action**: Update `.memorybankrules` with `next_phase: "Execution"`
+╔═══════════════════════════════════════════════════════════╗
+║                       STRATEGY                             ║
+║                                                           ║
+║  Identify  -->  Create     -->  Prioritize  -->  Decompose ║
+║  Tasks         Instructions     Tasks          Complex Tasks║
+╚═══════════════════════════════════════════════════════════╝
 
-## Context Loading
+## ENTERING/EXITING THIS PHASE
+
+**Enter if**:
+- `.memorybankrules` shows `CURRENT: Strategy`
+- Transitioning from Setup/Maintenance
+
+**Exit when**:
+- All instruction files are created with complete steps
+- Dependencies are clearly defined
+- Tasks are prioritized and ready for execution
+
+**Exit action**:
+```
+[PHASE_MARKER]
+CURRENT: Strategy
+NEXT: Execution
+LAST_ACTION: Completed Strategy Phase - Tasks Planned
+REQUIRED_BEFORE_TRANSITION: User Action Required
+[/PHASE_MARKER]
+```
+
+## CONTEXT LOADING
+
 1. Read core files:
    - `.memorybankrules`
-   - `projectbrief.md`
-   - `productContext.md`
-   - `activeContext.md`
-   - `dependency_tracker.md`
-   - `changelog.md`
-   - `doc_tracker.md`
+   - `memory-bank/projectbrief.md`
+   - `memory-bank/productContext.md`
+   - `memory-bank/activeContext.md`
+   - `memory-bank/dependency_tracker.md`
+   - `memory-bank/changelog.md`
+   - `docs/doc_tracker.md`
    
 2. Review `activeContext.md` for current state and priorities
 3. Check dependency trackers for module/file relationships
 4. Review project objectives from `projectbrief.md`
 
-## Creating Task Instruction Files
+## TASK INSTRUCTION FILE CREATION
+
 1. Identify task/subtask based on:
    - `projectbrief.md` objectives
    - `activeContext.md` priorities
-   - Dependencies from `dependency_tracker.md`
+   - Dependencies from trackers
 
-2. Choose task name and location:
-   - **Task**: Create `{task_name}_instructions.txt` in `memory-bank/strategy_tasks/`
-   - **Subtask**: Place in parent task subdirectory
-   - **Module-level**: Create `{module_dir}/{module_dir}_main_instructions.txt`
+2. Create file with correct naming convention:
+   ```
+   T{number}_{task_name}_instructions.txt
+   ```
+   For example: `T1_DatabaseSetup_instructions.txt`
 
-3. Populate instruction file sections:
-   - Title: `# {Task Name} Instructions`
-   - Objective: Clear statement of purpose and goals
-   - Context: Background, constraints, references
-   - Dependencies: List required modules/files using IDs from trackers
-   - Steps: Break into actionable increments
-   - Expected Output: Describe deliverables
-   - Notes: Additional considerations
+3. Populate instruction file with required sections:
+   ```
+   # {Task Name} Instructions
+   
+   ## Objective
+   [Clear statement of purpose]
+   
+   ## Context
+   [Background information]
+   
+   ## Dependencies
+   [List of required modules/files with keys]
+   
+   ## Steps
+   1. [First step]
+   2. [Second step]
+   ...
+   
+   ## Expected Output
+   [Description of deliverables]
+   
+   ## Notes
+   [Additional considerations]
+   ```
 
-4. For module-level tasks, include mini dependency tracker:
+4. For module-level tasks, include mini dependency tracker at end:
    ```
    ## Mini Dependency Tracker
-   ---TRACKER_START---
-   file_a = REQ:file_b,file_c
-   file_b = REQ:file_d PROV:file_a
-   ---TRACKER_END---
+   [DEP_MATRIX_START]
+   # KEY DEFINITIONS
+   K1: module_name/file1.py
+   K2: module_name/file2.py
+   
+   # MATRIX
+       | K1 | K2 |
+   K1  | -  | >  |
+   K2  | <  | -  |
+   [DEP_MATRIX_END]
    ```
 
-## Task Prioritization Process
+## TASK PRIORITIZATION
+
 1. Review existing instruction files
 2. Assess dependencies from trackers to identify prerequisite tasks
 3. Align with project objectives from `projectbrief.md`
 4. Consider recent priorities from `activeContext.md`
-5. Create priority ranking of tasks
-6. Document prioritization reasoning in `activeContext.md`
+5. Document prioritization in `activeContext.md`:
+   ```
+   ## Task Priorities
+   1. T1_DatabaseSetup (Highest) - Required for all other tasks
+   2. T2_UserAuthentication (High) - Security requirement
+   3. T3_UIComponents (Medium) - Can be started in parallel
+   ```
 
-## Recursive Task Decomposition
+## RECURSIVE TASK DECOMPOSITION
+
 For complex tasks:
 1. Analyze complexity and scope
 2. If too large, identify logical subtasks
-3. Create instruction file for each subtask
+3. Create instruction file for each subtask following naming convention:
+   ```
+   T{parent_number}_{parent_name}_ST{subtask_number}_{subtask_name}_instructions.txt
+   ```
+   For example: `T1_DatabaseSetup_ST1_SchemaDesign_instructions.txt`
+
 4. Define dependencies between subtasks
 5. Update parent task to reference subtasks
 6. Document decomposition in `activeContext.md`
 
-## Strategy MUP
-After task planning actions:
-1. Update instruction files with latest changes
-2. Update `activeContext.md` with:
-   - Summary of planned tasks
-   - List of instruction file locations
-   - Task priorities and reasoning
-3. Update `.memorybankrules`:
-   ```
-   [LAST_ACTION_STATE]
-   last_action: "Completed Strategy Phase - Tasks Planned"
-   current_phase: "Strategy"
-   next_action: "Phase Complete - User Action Required"
-   next_phase: "Execution"
-   ```
-4. Update `changelog.md` for significant strategy decisions
+## STRATEGY MUP ADDITIONS
 
-## Exit Checklist
-Before transitioning to Execution phase:
-- All instruction files contain complete steps
-- Dependencies are clearly defined
-- Tasks are prioritized
-- Recursive decomposition is complete where needed
-- `.memorybankrules` is updated with next phase "Execution"
+In addition to core MUP checklist, also verify:
+[ ] 6. Task instructions follow naming convention
+[ ] 7. All task instructions have complete sections
+[ ] 8. Task priorities are documented
 
-## Process Flow
-```
-1. Load Context → 
-2. Identify Tasks → 
-3. Create Instruction Files → 
-4. Prioritize → 
-5. Decompose Complex Tasks → 
-6. Update MUP → 
-7. Exit Phase
-```
+## CHECKPOINTS BEFORE TRANSITION
+
+[TRANSITION_CHECKLIST]
+[ ] All identified tasks have instruction files
+[ ] All instruction files have complete sections
+[ ] Dependencies are clearly specified
+[ ] Task priorities are documented
+[ ] Complex tasks are decomposed if needed
+[ ] `.memorybankrules` updated with NEXT: Execution
+[/TRANSITION_CHECKLIST]
+
+## REQUIRED RESPONSE FORMAT
+
+All responses after an action MUST end with:
+
+[MUP_VERIFICATION]
+[X] 1. Updated activeContext.md with: [brief description]
+[X] 2. Updated changelog.md: [Yes/No + reason]
+[X] 3. Updated phase marker with last_action: [action description]
+[X] 4. Verified next action is correct: [next action]
+[X] 5. Checked if phase transition is needed: [Yes/No + reason]
+[X] 6. Task instructions follow naming convention: [Yes/No + details]
+[X] 7. All task instructions have complete sections: [Yes/No + details]
+[X] 8. Task priorities are documented: [Yes/No + details]
+[/MUP_VERIFICATION]

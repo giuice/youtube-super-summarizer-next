@@ -20,6 +20,17 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        // DaisyUI button variants
+        daisyDefault: "btn",
+        daisyPrimary: "btn btn-primary",
+        daisySecondary: "btn btn-secondary",
+        daisyAccent: "btn btn-accent",
+        daisyGhost: "btn btn-ghost",
+        daisyLink: "btn btn-link",
+        daisyInfo: "btn btn-info",
+        daisySuccess: "btn btn-success",
+        daisyWarning: "btn btn-warning",
+        daisyError: "btn btn-error",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

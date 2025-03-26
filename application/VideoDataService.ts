@@ -164,11 +164,11 @@ export class VideoDataService {
 
   static async checkApiKey(apiKey: string, modelType: string = 'openai'): Promise<boolean> {
     try {
-      if (modelType === 'deepseek-reasoner') {
+      if (modelType === 'deepseek-chat') {
         const response = await axios.post(
           'https://api.deepseek.com/chat/completions',
           {
-            model: "deepseek-reasoner",
+            model: "deepseek-chat",
             messages: [
               {
                 role: "user",
