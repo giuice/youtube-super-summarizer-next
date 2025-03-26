@@ -13,6 +13,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -116,7 +118,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
 
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col bg-background border">
+      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col bg-background/100 border">
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle className="text-lg font-semibold">Chat with Video Content</DialogTitle>
@@ -128,7 +130,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
                   ChatHistoryService.clearHistory(videoId);
                   setMessages([]);
                 }}
-                className="text-muted-foreground hover:text-destructive"
+                className="text-muted-content hover:text-destructive"
               >
                 Clear History
               </Button>
@@ -142,7 +144,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 && (
             <Card className="p-6">
-              <div className="text-center text-muted-foreground">
+              <div className="text-center text-muted-content">
                 <p>Ask questions about the video content!</p>
                 <p className="text-sm mt-2">Examples:</p>
                 <ul className="text-sm mt-1 space-y-1">
@@ -166,7 +168,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
                 message.role === 'user' ? "bg-secondary" : "bg-primary"
               )}>
                 <AvatarFallback className={cn(
-                  message.role === 'user' ? "text-secondary-foreground" : "text-primary-foreground"
+                  message.role === 'user' ? "text-secondary-content" : "text-primary-content"
                 )}>
                   {message.role === 'user' ? 'You' : 'AI'}
                 </AvatarFallback>
@@ -178,7 +180,8 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
                   ? "bg-primary text-primary-content" 
                   : "bg-muted text-muted-content"
               )}>
-                <p className="text-sm">{message.content}</p>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} >
+                  {message.content}</ReactMarkdown>
               </Card>
             </div>
           ))}
@@ -209,7 +212,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
             variant="daisyPrimary"
           >
             {isLoading ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-foreground" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-content" />
             ) : (
               'Send'
             )}
