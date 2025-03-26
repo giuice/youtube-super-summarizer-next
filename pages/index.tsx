@@ -45,6 +45,7 @@ export default function Home() {
 
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApiKey(e.target.value);
+    localStorage.setItem('selected_model', apiKey);
   };
 
   const toggleModal = () => {
@@ -55,8 +56,27 @@ export default function Home() {
     setUseChapters(e.target.checked);
   };
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedModel(e.target.value);
+  const handleSelectChange = (value: string) => {
+    // First save the current API key for the current model before changing models
+    if (apiKey && apiKey.trim() !== '') {
+      const currentModelKeyName = `${selectedModel}_api_key`;
+      localStorage.setItem(currentModelKeyName, apiKey);
+    }
+    
+    // Now change the selected model
+    setSelectedModel(value);
+    localStorage.setItem('selected_model', value);
+    
+    // Load the API key specific to the newly selected model
+    const newModelKeyName = `${value}_api_key`;
+    const storedApiKey = localStorage.getItem(newModelKeyName);
+    
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
+    } else {
+      // Only clear the API key if there's no saved key for the new model
+      setApiKey('');
+    }
   };
 
   const handleVideoTitleUpdate = (title: string) => {
@@ -75,22 +95,35 @@ export default function Home() {
   const checkApiKey = useCallback(async (): Promise<boolean> => {
     const checked = await VideoDataService.checkApiKey(apiKey, selectedModel);
     if (!checked) {
-      setValidationError('Please enter a valid OpenAI API key');
+      setValidationError(`Please enter a valid ${selectedModel} API key`);
       setApiKey('');
       return false;
     } else {
       setValidationError('');
-      // Save the API key to localStorage
-      localStorage.setItem('openai_api_key', apiKey);
+      // Save the API key to localStorage with model-specific name
+      const modelKeyName = `${selectedModel}_api_key`;
+      localStorage.setItem(modelKeyName, apiKey);
       return true;
     }
-  }, [apiKey]);
+  }, [apiKey, selectedModel]);
 
   useEffect(() => {
-    // Get the API key from localStorage
-    const storedApiKey = localStorage.getItem('openai_api_key');
-    if (storedApiKey) {
-      setApiKey(storedApiKey);
+    // Get the selected model from localStorage
+    const storedModel = localStorage.getItem('selected_model');
+    
+    if (storedModel) {
+      setSelectedModel(storedModel);
+      
+      // Get the API key specific to the retrieved model
+      const modelKeyName = `${storedModel}_api_key`;
+      const storedApiKey = localStorage.getItem(modelKeyName);
+      
+      if (storedApiKey) {
+        setApiKey(storedApiKey);
+      } else {
+        // Clear API key if no stored key exists for this model
+        setApiKey('');
+      }
     }
   }, []);
 
@@ -126,46 +159,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        {/* <section className="relative py-12 mb-12">
-
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg -z-10" />
-          
-          <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-              Supercharge Your YouTube Experience!
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              Get concise summaries of your favorite videos in minutes
-            </p>
-
-            <div className="flex items-center gap-2 max-w-2xl mx-auto">
-              <Input
-                type="text"
-                placeholder="Enter YouTube URL"
-                value={url}
-                onChange={handleInputChange}
-                className="flex-1"
-              />
-              <Button 
-                variant="daisyError"
-                onClick={handleButtonClick} 
-                disabled={!apiKey}
-                className="whitespace-nowrap"
-              >
-                <FontAwesomeIcon icon={faSearch} className="mr-2" />
-                Go!
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={toggleModal}
-              >
-                <FontAwesomeIcon icon={faBoxOpen} className="mr-2" />
-                Options
-              </Button>
-              <ThemeToggle />
-            </div>
-          </div>
-        </section> */}
+       
         <Hero onButtonClick={handleButtonClick} onInputChange={handleInputChange}
           toggleModal={toggleModal} url={url} isApiKeyValid />
 
@@ -200,7 +194,7 @@ export default function Home() {
                 </label>
                 <Select
                   value={selectedModel}
-                  onValueChange={setSelectedModel}
+                  onValueChange={handleSelectChange}
                 >
                   <SelectTrigger>
                     <SelectValue />

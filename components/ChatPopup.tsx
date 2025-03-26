@@ -72,6 +72,12 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
     setIsLoading(true);
     setIsTyping(true);
 
+    // Get the selected model from localStorage
+    const selectedModel = localStorage.getItem('selected_model') || 'gpt-4o-mini';
+    // Get the API key specific to the model
+    const modelKeyName = `${selectedModel}_api_key`;
+    const apiKey = localStorage.getItem(modelKeyName) || '';
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -82,7 +88,8 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
           message: inputMessage,
           videoId,
           history: messages,
-          apiKey: localStorage.getItem('openai_api_key') || ''
+          apiKey: apiKey,
+          modelName: selectedModel
         }),
       });
 
@@ -118,7 +125,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
 
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col bg-background/100 border">
+      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col bg-white dark:bg-gray-900 border shadow-lg" style={{ backgroundColor: 'var(--background)', opacity: 1 }}>
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle className="text-lg font-semibold">Chat with Video Content</DialogTitle>

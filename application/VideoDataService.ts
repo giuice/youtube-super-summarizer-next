@@ -162,56 +162,39 @@ export class VideoDataService {
     };
   }
 
-  static async checkApiKey(apiKey: string, modelType: string = 'openai'): Promise<boolean> {
+  static async checkApiKey(apiKey: string, modelName: string): Promise<boolean> {
     try {
-      if (modelType === 'deepseek-chat') {
-        const response = await axios.post(
-          'https://api.deepseek.com/chat/completions',
-          {
-            model: "deepseek-chat",
-            messages: [
-              {
-                role: "user",
-                content: "Hello!"
-              }
-            ],
-            max_tokens: 15
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`
-            }
-          }
-        );
-
-        return response.status === 200;
-      } else {
-        // Default OpenAI validation
-        const response = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
-          {
-            model: "gpt-4o-mini",
-            messages: [
-              {
-                role: "user",
-                content: "Hello!"
-              }
-            ],
-            max_tokens: 15
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`
-            }
-          }
-        );
-
-        return response.status === 200;
+      // Don't proceed if no API key provided
+      if (!apiKey || apiKey.trim() === '') {
+        return false;
       }
+      
+      // We'll do a check based on model type
+      if (modelName.includes('gpt')) {
+        // Check OpenAI API key
+        const response = await fetch('/api/check-api-key', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ apiKey, modelName }),
+        });
+        return response.ok;
+      } else if (modelName.includes('deepseek')) {
+        // Check DeepSeek API key
+        const response = await fetch('/api/check-deepseek-key', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ apiKey, modelName }),
+        });
+        return response.ok;
+      }
+      
+      return false;
     } catch (error) {
-      console.error(`${modelType} API key validation failed:`, error);
+      console.error('Error checking API key:', error);
       return false;
     }
   }

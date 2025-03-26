@@ -11,6 +11,7 @@ export interface ChatRequest {
     videoId: string;
     history: ChatMessage[];
     apiKey: string;
+    modelName: string;
 }
 
 export interface ChatResponse {
