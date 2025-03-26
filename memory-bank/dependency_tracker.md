@@ -12,6 +12,8 @@ components_video: components/VideoSummarizer.tsx,VideoModal.tsx,VideoTitleList.t
 components_summary: components/SummaryList.tsx,SummaryItem.tsx
 components_pagination: components/Pagination.tsx
 components_chat: components/ChatPopup.tsx
+components_typing_indicator: components/ui/TypingIndicator.tsx
+chat_history_service: domain/chat/ChatHistoryService.ts
 theme_provider: components/ThemeProvider.tsx
 theme_toggle: components/ThemeToggle.tsx
 shadcn_ui: components/ui/*
@@ -19,20 +21,22 @@ next_themes: next-themes@latest
 
 # MATRIX (Row depends on Column)
 # Symbols: > (depends on), < (depended by), x (mutual), - (none), d (doc)
-    | nextjs | tailwind | domain_model | domain_summary | domain_transcript | domain_video | video_segment | app_service | components_video | components_summary | components_chat | theme_provider | theme_toggle | shadcn | next_themes
-nextjs | - | - | - | - | - | - | - | - | > | > | > | - | - | - | -
-tailwind | - | - | - | - | - | - | - | - | - | - | - | > | - | > | -
-domain_model | - | - | - | < | < | < | < | - | - | - | - | - | - | - | -
-domain_summary | - | - | > | - | - | - | - | > | - | > | - | - | - | - | -
-domain_transcript | - | - | > | - | - | - | > | > | - | - | > | - | - | - | -
-domain_video | - | - | > | - | - | - | - | > | > | - | - | - | - | - | -
-video_segment | - | - | > | - | > | - | - | > | - | > | - | - | - | - | -
-app_service | - | - | - | > | > | > | > | - | > | - | - | - | - | - | -
-components_video | > | - | - | - | - | > | - | > | - | - | - | > | - | > | -
-components_summary | > | - | - | > | - | - | > | - | - | - | - | > | - | > | -
-components_chat | > | - | - | - | > | - | - | - | - | - | - | > | - | > | -
-theme_provider | - | > | - | - | - | - | - | - | > | > | > | - | x | > | >
-theme_toggle | - | - | - | - | - | - | - | - | - | - | - | x | - | > | >
-shadcn | - | > | - | - | - | - | - | - | > | > | > | > | > | - | -
-next_themes | - | - | - | - | - | - | - | - | - | - | - | > | > | - | -
+    | nextjs | tailwind | domain_model | domain_summary | domain_transcript | domain_video | video_segment | app_service | components_video | components_summary | components_chat | components_typing_indicator | chat_history_service | theme_provider | theme_toggle | shadcn | next_themes
+nextjs | - | - | - | - | - | - | - | - | > | > | > | > | > | - | - | - | -
+tailwind | - | - | - | - | - | - | - | - | - | - | - | - | - | > | - | > | -
+domain_model | - | - | - | < | < | < | < | - | - | - | - | - | - | - | - | - | -
+domain_summary | - | - | > | - | - | - | - | > | - | > | - | - | - | - | - | - | -
+domain_transcript | - | - | > | - | - | - | > | > | - | - | > | - | > | - | - | - | -
+domain_video | - | - | > | - | - | - | - | > | > | - | - | - | - | - | - | - | -
+video_segment | - | - | > | - | > | - | - | > | - | > | - | - | - | - | - | - | -
+app_service | - | - | - | > | > | > | > | - | > | - | - | - | - | - | - | - | -
+components_video | > | - | - | - | - | > | - | > | - | - | - | - | - | > | - | > | -
+components_summary | > | - | - | > | - | - | > | - | - | - | - | - | - | > | - | > | -
+components_chat | > | - | - | - | > | - | - | - | - | - | - | > | > | > | - | > | -
+components_typing_indicator | > | > | - | - | - | - | - | - | - | - | - | - | - | - | - | > | -
+chat_history_service | - | - | - | - | > | - | - | - | - | - | > | - | - | - | - | - | -
+theme_provider | - | > | - | - | - | - | - | - | > | > | > | - | - | - | x | > | >
+theme_toggle | - | - | - | - | - | - | - | - | - | - | - | - | - | x | - | > | >
+shadcn | - | > | - | - | - | - | - | - | > | > | > | > | - | > | > | - | -
+next_themes | - | - | - | - | - | - | - | - | - | - | - | - | - | > | > | - | -
 [DEP_MATRIX_END]

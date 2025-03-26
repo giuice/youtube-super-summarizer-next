@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { TypingIndicator } from "@/components/ui/TypingIndicator";
+import { ChatHistoryService } from "@/domain/chat/ChatHistoryService";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +17,8 @@ import { cn } from "@/lib/utils";
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  timestamp?: number;
+  videoId?: string;
 }
 
 interface ChatPopupProps {
@@ -28,7 +32,18 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (show) {
+      const history = ChatHistoryService.getHistory(videoId);
+      setMessages(history.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      })));
+    }
+  }, [show, videoId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -44,10 +59,13 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
 
     const userMessage: Message = {
       role: 'user',
-      content: inputMessage
+      content: inputMessage,
+      timestamp: Date.now(),
+      videoId
     };
 
     setMessages(prev => [...prev, userMessage]);
+    ChatHistoryService.saveMessage(videoId, userMessage);
     setInputMessage('');
     setIsLoading(true);
     setIsTyping(true);
@@ -73,11 +91,15 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
       const data = await response.json();
       
       setTimeout(() => {
-        setIsTyping(false);
-        setMessages(prev => [...prev, {
+        const assistantMessage: Message = {
           role: 'assistant',
-          content: data.response
-        }]);
+          content: data.response,
+          timestamp: Date.now(),
+          videoId
+        };
+        setIsTyping(false);
+        setMessages(prev => [...prev, assistantMessage]);
+        ChatHistoryService.saveMessage(videoId, assistantMessage);
       }, 700);
       
     } catch (error) {
@@ -96,7 +118,22 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
     <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col bg-background border">
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">Chat with Video Content</DialogTitle>
+          <div className="flex justify-between items-center">
+            <DialogTitle className="text-lg font-semibold">Chat with Video Content</DialogTitle>
+            {messages.length > 0 && (
+              <Button
+                variant="daisySecondary"
+                size="sm"
+                onClick={() => {
+                  ChatHistoryService.clearHistory(videoId);
+                  setMessages([]);
+                }}
+                className="text-muted-foreground hover:text-destructive"
+              >
+                Clear History
+              </Button>
+            )}
+          </div>
           <DialogDescription>
             Ask questions about the video content
           </DialogDescription>
@@ -138,8 +175,8 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
               <Card className={cn(
                 "p-3 max-w-[75%]",
                 message.role === 'user' 
-                  ? "bg-primary text-primary-foreground" 
-                  : "bg-muted text-muted-foreground"
+                  ? "bg-primary text-primary-content" 
+                  : "bg-muted text-muted-content"
               )}>
                 <p className="text-sm">{message.content}</p>
               </Card>
@@ -149,15 +186,9 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
           {isTyping && (
             <div className="flex items-start gap-2">
               <Avatar className="w-8 h-8 bg-primary">
-                <AvatarFallback className="text-primary-foreground">AI</AvatarFallback>
+                <AvatarFallback className="text-primary-content">AI</AvatarFallback>
               </Avatar>
-              <Card className="p-3 bg-muted">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-              </Card>
+              <TypingIndicator variant="youtube" />
             </div>
           )}
           <div ref={messagesEndRef} />

@@ -1,6 +1,9 @@
 export interface ChatMessage {
     role: 'user' | 'assistant';
     content: string;
+    timestamp?: number;
+    videoId?: string;
+    isRead?: boolean;
 }
 
 export interface ChatRequest {
