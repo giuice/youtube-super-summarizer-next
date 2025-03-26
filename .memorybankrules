@@ -1,13 +1,12 @@
 current_phase: "Execution"
-last_action: "Identified theme toggle bug - clicking on themes has no effect"
+last_action: "Completed Step 1 of semantic search (Research): Chose pgvector with Supabase/Neon."
 next_steps:
-  - "[HIGH] Fix theme toggle bug where clicking themes has no effect"
   - "[HIGH] Continue verifying theme consistency across remaining components"
-  - "[MEDIUM] Implement semantic search for transcript content in chat"
+  - "[HIGH] Implement semantic search for transcript content in chat" # Promoted based on user feedback
   - "[MEDIUM] Enhance chat experience with typing indicators and history persistence"
   - "Monitor database performance in production"
 next_phase: "Strategy"
-last_updated: "March 25, 2025"
+last_updated: "March 26, 2025" # Updated date
 
 code_root_directories:
   - "application"
@@ -23,5 +22,5 @@ excluded_directories:
   - "memory-bank"
   - "public"
   - "styles"
-  
+
   [LEARNING_JOURNAL]
