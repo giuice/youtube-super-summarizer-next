@@ -125,7 +125,7 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ show, onClose, videoId }) 
 
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col bg-white dark:bg-gray-900 border shadow-lg" style={{ backgroundColor: 'var(--background)', opacity: 1 }}>
+      <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col border shadow-lg bg-white dark:bg-neutral-900">
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle className="text-lg font-semibold">Chat with Video Content</DialogTitle>

@@ -7,6 +7,7 @@ import VideoDataService from '@/application/VideoDataService';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Settings } from "lucide-react";
+import { SettingsDialog } from '@/components/SettingsDialog';
 import {
   Dialog,
   DialogContent,
@@ -163,7 +164,12 @@ export default function Home() {
         <Hero onButtonClick={handleButtonClick} onInputChange={handleInputChange}
           toggleModal={toggleModal} url={url} isApiKeyValid />
 
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <SettingsDialog isOpen={isModalOpen} onOpenChange={setIsModalOpen}
+          apiKey={apiKey} selectedModel={selectedModel} useChapters={useChapters}
+          setUseChapters={setUseChapters} handleSelectChange={handleSelectChange}
+          handleApiKeyChange={handleApiKeyChange} />
+
+        {/* <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="glass-card sm:max-w-md animate-scale-in">
             <DialogHeader>
               <DialogTitle>Settings</DialogTitle>
@@ -238,7 +244,7 @@ export default function Home() {
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
 
         <div className="container max-w-6xl mx-auto mt-8">
           <div className="flex flex-col lg:flex-row gap-6">
@@ -246,7 +252,7 @@ export default function Home() {
               {!apiKey && (
                 <Alert className="glass-card border-border/30">
                   <AlertDescription>
-                    To summarize a new video please enter your OpenAI API key in the{" "}
+                    To summarize a new video please enter one API key in the{" "}
                     <button onClick={toggleModal} className="text-primary hover:underline">
                       settings menu
                     </button>.
