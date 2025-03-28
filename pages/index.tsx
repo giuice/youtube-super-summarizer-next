@@ -45,8 +45,9 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setApiKey(e.target.value);
-    localStorage.setItem('selected_model', apiKey);
+    const newApiKey = e.target.value;
+    setApiKey(newApiKey);
+    localStorage.setItem(`${selectedModel}_api_key`, newApiKey);
   };
 
   const toggleModal = () => {
@@ -168,83 +169,6 @@ export default function Home() {
           apiKey={apiKey} selectedModel={selectedModel} useChapters={useChapters}
           setUseChapters={setUseChapters} handleSelectChange={handleSelectChange}
           handleApiKeyChange={handleApiKeyChange} />
-
-        {/* <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="glass-card sm:max-w-md animate-scale-in">
-            <DialogHeader>
-              <DialogTitle>Settings</DialogTitle>
-              <DialogDescription>
-                Configure your summarization preferences
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-5 py-4">
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="useChapters"
-                  checked={useChapters}
-                  onCheckedChange={(checked) => setUseChapters(checked as boolean)}
-                  className="data-[state=checked]:bg-primary"
-                />
-                <label
-                  htmlFor="useChapters"
-                  className="text-sm font-medium leading-none"
-                >
-                  Use Chapters
-                </label>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Use model to summarize:
-                </label>
-                <Select
-                  value={selectedModel}
-                  onValueChange={handleSelectChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="glass-card">
-                    <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
-                    <SelectItem value="deepseek-chat">deepseek-chat</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  OpenAI API Key
-                </label>
-                <Input
-                  type="text"
-                  placeholder="Enter your OpenAI API key"
-                  value={apiKey}
-                  onChange={handleApiKeyChange}
-                  className="glass-input"
-                />
-              </div>
-
-              <Card className="glass-card border-border/40">
-                <CardContent className="pt-6">
-                  <ul className="list-disc pl-4 space-y-2 text-sm text-muted-foreground">
-                    <li>An API key is required to use this app.</li>
-                    <li>Don&apos;t have an OpenAPI key? <a href="https://platform.openai.com/" target="_blank" rel="noopener" className="text-primary hover:underline">Sign up</a> for access.</li>
-                    <li>Don&apos;t have a DeepSeek API key? <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noopener" className="text-primary hover:underline">Sign up</a> for access.</li>
-                    <li>Your key is stored only in your browser for convenience.</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}
-                className="glass-card hover:bg-secondary/50">
-                Close
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog> */}
 
         <div className="container max-w-6xl mx-auto mt-8">
           <div className="flex flex-col lg:flex-row gap-6">
